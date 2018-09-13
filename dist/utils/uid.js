@@ -1,6 +1,6 @@
-let uid = 1;
+var uid = 1;
 export default {
-    gen() {
+    gen: function () {
         return uid++;
     }
 };
