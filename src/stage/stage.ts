@@ -69,8 +69,8 @@ class Stage {
   /**
    * add object to stage
    */
-  public add(): Stage {
-    this.objects.push(...arguments);
+  public add(...objects: DisplayObject[]): Stage {
+    this.objects.push.apply(this.objects, objects);
 
     return this;
   }
