@@ -15,7 +15,6 @@ export default {
   plugins: [
     typescript({
       typescript: require('typescript'),
-      importHelpers: true
     }),
     nodeResolve({jsnext: true, main: true}),
     uglify({}, minify)
