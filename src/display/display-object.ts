@@ -1,33 +1,44 @@
 import UID from '../utils/uid';
 
-export default class DisplayObject {
+interface IDisplayObjectOptions {
+  visible?: boolean;
+  left?: number;
+  top?: number;
+}
+
+export default abstract class DisplayObject {
   readonly type: string = 'displayObject';
   readonly id: number;
   readonly proxy: any;
   readonly updateList: Array<string> = ['visible', 'left', 'top'];
 
-  private updateFlag: boolean = false;
+  protected updateFlag: boolean = false;
 
   public visible: boolean = true;
   public left: number = 0;
   public top: number = 0;
 
-  public constructor(options: { left: number, top: number }) {
+  protected constructor(options: IDisplayObjectOptions) {
     this.id = UID.gen();
     this.proxy = new Proxy(this, {
       get: (target, key, receiver) => {
         return Reflect.get(target, key, receiver);
       },
       set: (target, key, value, receiver) => {
+        Reflect.set(target, key, value, receiver);
         if (this.updateList.indexOf(String(key)) !== -1) {
-          this.updateFlag = true;
+          this.update(String(key));
         }
-        return Reflect.set(target, key, value, receiver);
+        return true;
       }
     });
     this.set(options);
 
     return this.proxy;
+  }
+
+  protected update(key: string) {
+    this.updateFlag = true;
   }
 
   public set(options: any) {
@@ -44,8 +55,6 @@ export default class DisplayObject {
     return this.updateFlag;
   }
 
-  public render(ctx: CanvasRenderingContext2D): void {
-    this.updateFlag = false;
-  }
+  public abstract render(ctx: CanvasRenderingContext2D): void
 
 }

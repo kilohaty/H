@@ -70,7 +70,7 @@ class Stage {
    * add object to stage
    */
   public add(...objects: DisplayObject[]): Stage {
-    this.objects.push.apply(this.objects, objects);
+    this.objects.push(...objects);
 
     return this;
   }
