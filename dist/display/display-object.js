@@ -14,15 +14,19 @@ var DisplayObject = /** @class */ (function () {
                 return Reflect.get(target, key, receiver);
             },
             set: function (target, key, value, receiver) {
+                Reflect.set(target, key, value, receiver);
                 if (_this.updateList.indexOf(String(key)) !== -1) {
-                    _this.updateFlag = true;
+                    _this.update(String(key));
                 }
-                return Reflect.set(target, key, value, receiver);
+                return true;
             }
         });
         this.set(options);
         return this.proxy;
     }
+    DisplayObject.prototype.update = function (key) {
+        this.updateFlag = true;
+    };
     DisplayObject.prototype.set = function (options) {
         if (typeof options === 'object') {
             for (var key in options) {
@@ -34,9 +38,6 @@ var DisplayObject = /** @class */ (function () {
     };
     DisplayObject.prototype.needUpdate = function () {
         return this.updateFlag;
-    };
-    DisplayObject.prototype.render = function (ctx) {
-        this.updateFlag = false;
     };
     return DisplayObject;
 }());

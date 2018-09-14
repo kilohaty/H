@@ -19,7 +19,7 @@ declare class Stage {
     /**
      * add object to stage
      */
-    add(): Stage;
+    add(...objects: DisplayObject[]): Stage;
     /**
      * remove object from stage by object id
      */
