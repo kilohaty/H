@@ -1,6 +1,6 @@
 import UID from '../utils/uid';
 
-interface IDisplayObjectOptions {
+export interface IDisplayObjectOptions {
   visible?: boolean;
   left?: number;
   top?: number;
@@ -10,13 +10,14 @@ export default abstract class DisplayObject {
   readonly type: string = 'displayObject';
   readonly id: number;
   readonly proxy: any;
-  readonly updateList: Array<string> = ['visible', 'left', 'top'];
 
   protected updateFlag: boolean = false;
 
   public visible: boolean = true;
   public left: number = 0;
   public top: number = 0;
+
+  public static updateList: Array<string> = ['visible', 'left', 'top'];
 
   protected constructor(options: IDisplayObjectOptions) {
     this.id = UID.gen();
@@ -26,7 +27,7 @@ export default abstract class DisplayObject {
       },
       set: (target, key, value, receiver) => {
         Reflect.set(target, key, value, receiver);
-        if (this.updateList.indexOf(String(key)) !== -1) {
+        if (receiver.constructor.updateList.indexOf(String(key)) !== -1) {
           this.update(String(key));
         }
         return true;
@@ -45,7 +46,7 @@ export default abstract class DisplayObject {
     if (typeof options === 'object') {
       for (let key in options) {
         if (options.hasOwnProperty(key)) {
-          this.proxy[key] = options[key];
+          this[key] = options[key];
         }
       }
     }
