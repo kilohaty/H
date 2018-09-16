@@ -3,12 +3,14 @@
   "version": "0.1.0",
   "description": "A lightweight canvas library which providing 2d draw",
   "main": "dist/index.min.js",
+  "types": "dist/index.d.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kilohaty/h.git"
   },
   "scripts": {
-    "build": "tsc -p . && rollup -c",
+    "dev": "tsc -p . && rollup -c rollup.dev.config.js --watch",
+    "build": "tsc -p . && rollup -c rollup.prod.config.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "axi <axi@kilohaty.com>",
