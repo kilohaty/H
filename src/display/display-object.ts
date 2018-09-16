@@ -1,9 +1,18 @@
 import UID from '../utils/uid';
+import IPoint from '../utils/point';
+
+const {abs} = Math;
 
 export interface IDisplayObjectOptions {
   visible?: boolean;
   left?: number;
   top?: number;
+  width?: number;
+  height?: number;
+  originX?: string;
+  originY?: string;
+  scaleX?: number;
+  scaleY?: number;
 }
 
 export default abstract class DisplayObject {
@@ -16,8 +25,14 @@ export default abstract class DisplayObject {
   public visible: boolean = true;
   public left: number = 0;
   public top: number = 0;
+  public width: number = 0;
+  public height: number = 0;
+  public originX: string = 'left';
+  public originY: string = 'top';
+  public scaleX: number = 1;
+  public scaleY: number = 1;
 
-  public static updateList: Array<string> = ['visible', 'left', 'top'];
+  public static updateList: Array<string> = ['visible', 'left', 'top', 'originX', 'originY'];
 
   protected constructor(options: IDisplayObjectOptions) {
     this.id = UID.gen();
@@ -56,6 +71,26 @@ export default abstract class DisplayObject {
     return this.updateFlag;
   }
 
-  public abstract render(ctx: CanvasRenderingContext2D): void
+  public abstract render(ctx: CanvasRenderingContext2D): void;
+
+  public getWidth(): number {
+    return abs(this.width * this.scaleX);
+  };
+
+  public getHeight(): number {
+    return abs(this.height * this.scaleY);
+  };
+
+  public getOriginPoint(): IPoint {
+    let x = this.originX === 'center' ? this.width / 2
+      : this.originX === 'right' ? this.width : 0;
+    let y = this.originY === 'center' ? this.height / 2
+      : this.originY === 'bottom' ? this.height : 0;
+
+    x = abs(x * this.scaleX);
+    y = abs(y * this.scaleY);
+
+    return {x: x, y: y};
+  }
 
 }
