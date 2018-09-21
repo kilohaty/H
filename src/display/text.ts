@@ -28,7 +28,7 @@ export default class Text extends DisplayObject {
     this.set(options);
   }
 
-  protected async update(key: string) {
+  protected update(key: string) {
     if (['text', 'fontSize', 'fontWeight', 'fontFamily'].indexOf(key) !== -1) {
       this.calcDimensions();
     }
