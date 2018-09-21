@@ -2,7 +2,7 @@ import DisplayObject from './display-object';
 import {IDisplayObjectOptions} from './display-object';
 import TextHelper from '../utils/text-helper';
 
-export interface iTextOptions extends IDisplayObjectOptions {
+export interface ITextOptions extends IDisplayObjectOptions {
   text?: string;
   fontSize?: number;
   fontWeight?: number;
@@ -23,7 +23,7 @@ export default class Text extends DisplayObject {
 
   public static updateList: Array<string> = [...DisplayObject.updateList, 'text', 'fontSize', 'fontWeight', 'fontFamily', 'color'];
 
-  public constructor(options: iTextOptions) {
+  public constructor(options: ITextOptions) {
     super(null);
     this.set(options);
   }
