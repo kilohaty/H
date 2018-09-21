@@ -9,8 +9,8 @@ export interface IDisplayObjectOptions {
   top?: number;
   width?: number;
   height?: number;
-  originX?: string;
-  originY?: string;
+  originX?: 'left' | 'center' | 'right';
+  originY?: 'top' | 'center' | 'bottom';
   scaleX?: number;
   scaleY?: number;
 }
@@ -27,8 +27,8 @@ export default abstract class DisplayObject {
   public top: number = 0;
   public width: number = 0;
   public height: number = 0;
-  public originX: string = 'left';
-  public originY: string = 'top';
+  public originX: 'left' | 'center' | 'right' = 'left';
+  public originY: 'top' | 'center' | 'bottom' = 'top';
   public scaleX: number = 1;
   public scaleY: number = 1;
 
@@ -42,8 +42,8 @@ export default abstract class DisplayObject {
       },
       set: (target, key, value, receiver) => {
         Reflect.set(target, key, value, receiver);
-        if (receiver.constructor.updateList.indexOf(String(key)) !== -1) {
-          this.update(String(key));
+        if (receiver.constructor.updateList.indexOf(key) !== -1) {
+          this.update(<string>key);
         }
         return true;
       }
