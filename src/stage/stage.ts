@@ -58,9 +58,7 @@ class Stage {
       return;
     }
     this.cacheCtx.clearRect(0, 0, this.width, this.height);
-    this.objects.forEach(el => {
-      el.visible && el.render(this.cacheCtx);
-    });
+    this.objects.forEach(el => el.render(this.cacheCtx));
     this.ctx.clearRect(0, 0, this.width, this.height);
     this.ctx.drawImage(this.cacheCanvas, 0, 0);
     this.forceRender = false;

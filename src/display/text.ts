@@ -51,7 +51,7 @@ export default class Text extends DisplayObject {
     this.height = dimensions.height;
   }
 
-  public render(ctx: CanvasRenderingContext2D): void {
+  protected _render(ctx: CanvasRenderingContext2D): void {
     const {x: ox, y: oy} = this.getOriginPoint();
     let dstX = this.scaleX < 0 ? -this.width : 0;
     let dstY = this.scaleY < 0 ? -this.height : 0;

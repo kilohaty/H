@@ -71,7 +71,13 @@ export default abstract class DisplayObject {
     return this.updateFlag;
   }
 
-  public abstract render(ctx: CanvasRenderingContext2D): void;
+  public render(ctx: CanvasRenderingContext2D): void {
+    if (this.visible) {
+      this._render(ctx);
+    }
+  }
+
+  protected abstract _render(ctx: CanvasRenderingContext2D): void;
 
   public getWidth(): number {
     return abs(this.width * this.scaleX);

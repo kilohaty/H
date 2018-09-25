@@ -36,7 +36,7 @@ export default class Bitmap extends DisplayObject {
     this.updateFlag = true;
   }
 
-  public render(ctx: CanvasRenderingContext2D): void {
+  protected _render(ctx: CanvasRenderingContext2D): void {
     if (!this.bitmapSource) {
       this.updateFlag = false;
       return;

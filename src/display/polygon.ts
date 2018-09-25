@@ -46,7 +46,7 @@ export default class Polygon extends DisplayObject {
     this.height = maxY - minY;
   }
 
-  render(ctx: CanvasRenderingContext2D): void {
+  protected _render(ctx: CanvasRenderingContext2D): void {
     if (!this.points || this.points.length < MIN_EDGE_NUMBER) {
       this.updateFlag = false;
       return;
