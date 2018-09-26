@@ -41,9 +41,11 @@ export default abstract class DisplayObject {
         return Reflect.get(target, key, receiver);
       },
       set: (target, key, value, receiver) => {
-        Reflect.set(target, key, value, receiver);
-        if (receiver.constructor.updateList.indexOf(key) !== -1) {
-          this.update(<string>key);
+        if (target[key] !== value) {
+          Reflect.set(target, key, value, receiver);
+          if (receiver.constructor.updateList.indexOf(key) !== -1) {
+            this.update(<string>key);
+          }
         }
         return true;
       }
