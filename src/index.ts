@@ -3,6 +3,7 @@ import DisplayObject from './display/display-object';
 import Bitmap from './display/bitmap';
 import Text from './display/text';
 import Polygon from './display/polygon';
+import Sprite from './display/sprite';
 
 const H = {
   Stage,
@@ -10,6 +11,7 @@ const H = {
   Bitmap,
   Text,
   Polygon,
+  Sprite,
 };
 
 export default H;
