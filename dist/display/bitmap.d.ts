@@ -10,5 +10,5 @@ export default class Bitmap extends DisplayObject {
     static updateList: Array<string>;
     constructor(options: IBitmapOptions);
     protected update(key: string): Promise<void>;
-    render(ctx: CanvasRenderingContext2D): void;
+    protected _render(ctx: CanvasRenderingContext2D): void;
 }

@@ -1,6 +1,6 @@
 import DisplayObject from './display-object';
 import { IDisplayObjectOptions } from './display-object';
-export interface iTextOptions extends IDisplayObjectOptions {
+export interface ITextOptions extends IDisplayObjectOptions {
     text?: string;
     fontSize?: number;
     fontWeight?: number;
@@ -15,8 +15,8 @@ export default class Text extends DisplayObject {
     fontFamily: string;
     color: string;
     static updateList: Array<string>;
-    constructor(options: iTextOptions);
-    protected update(key: string): Promise<void>;
+    constructor(options: ITextOptions);
+    protected update(key: string): void;
     private calcDimensions;
-    render(ctx: CanvasRenderingContext2D): void;
+    protected _render(ctx: CanvasRenderingContext2D): void;
 }

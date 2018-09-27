@@ -15,15 +15,10 @@ var Text = /** @class */ (function (_super) {
         return _this;
     }
     Text.prototype.update = function (key) {
-        return tslib_1.__awaiter(this, void 0, void 0, function () {
-            return tslib_1.__generator(this, function (_a) {
-                if (['text', 'fontSize', 'fontWeight', 'fontFamily'].indexOf(key) !== -1) {
-                    this.calcDimensions();
-                }
-                this.updateFlag = true;
-                return [2 /*return*/];
-            });
-        });
+        if (['text', 'fontSize', 'fontWeight', 'fontFamily'].indexOf(key) !== -1) {
+            this.calcDimensions();
+        }
+        this.updateFlag = true;
     };
     Text.prototype.calcDimensions = function () {
         if (!this.text || !this.fontSize) {
@@ -35,7 +30,7 @@ var Text = /** @class */ (function (_super) {
         this.width = dimensions.width;
         this.height = dimensions.height;
     };
-    Text.prototype.render = function (ctx) {
+    Text.prototype._render = function (ctx) {
         var _a = this.getOriginPoint(), ox = _a.x, oy = _a.y;
         var dstX = this.scaleX < 0 ? -this.width : 0;
         var dstY = this.scaleY < 0 ? -this.height : 0;

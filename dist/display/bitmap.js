@@ -39,7 +39,7 @@ var Bitmap = /** @class */ (function (_super) {
             });
         });
     };
-    Bitmap.prototype.render = function (ctx) {
+    Bitmap.prototype._render = function (ctx) {
         if (!this.bitmapSource) {
             this.updateFlag = false;
             return;

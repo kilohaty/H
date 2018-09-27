@@ -5,8 +5,8 @@ export interface IDisplayObjectOptions {
     top?: number;
     width?: number;
     height?: number;
-    originX?: string;
-    originY?: string;
+    originX?: 'left' | 'center' | 'right';
+    originY?: 'top' | 'center' | 'bottom';
     scaleX?: number;
     scaleY?: number;
 }
@@ -20,8 +20,8 @@ export default abstract class DisplayObject {
     top: number;
     width: number;
     height: number;
-    originX: string;
-    originY: string;
+    originX: 'left' | 'center' | 'right';
+    originY: 'top' | 'center' | 'bottom';
     scaleX: number;
     scaleY: number;
     static updateList: Array<string>;
@@ -29,7 +29,8 @@ export default abstract class DisplayObject {
     protected update(key: string): void;
     set(options: any): void;
     needUpdate(): boolean;
-    abstract render(ctx: CanvasRenderingContext2D): void;
+    render(ctx: CanvasRenderingContext2D): void;
+    protected abstract _render(ctx: CanvasRenderingContext2D): void;
     getWidth(): number;
     getHeight(): number;
     getOriginPoint(): IPoint;

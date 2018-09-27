@@ -44,9 +44,7 @@ var Stage = /** @class */ (function () {
             return;
         }
         this.cacheCtx.clearRect(0, 0, this.width, this.height);
-        this.objects.forEach(function (el) {
-            el.visible && el.render(_this.cacheCtx);
-        });
+        this.objects.forEach(function (el) { return el.render(_this.cacheCtx); });
         this.ctx.clearRect(0, 0, this.width, this.height);
         this.ctx.drawImage(this.cacheCanvas, 0, 0);
         this.forceRender = false;

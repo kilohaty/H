@@ -20,9 +20,11 @@ var DisplayObject = /** @class */ (function () {
                 return Reflect.get(target, key, receiver);
             },
             set: function (target, key, value, receiver) {
-                Reflect.set(target, key, value, receiver);
-                if (receiver.constructor.updateList.indexOf(String(key)) !== -1) {
-                    _this.update(String(key));
+                if (target[key] !== value) {
+                    Reflect.set(target, key, value, receiver);
+                    if (receiver.constructor.updateList.indexOf(key) !== -1) {
+                        _this.update(key);
+                    }
                 }
                 return true;
             }
@@ -44,6 +46,11 @@ var DisplayObject = /** @class */ (function () {
     };
     DisplayObject.prototype.needUpdate = function () {
         return this.updateFlag;
+    };
+    DisplayObject.prototype.render = function (ctx) {
+        if (this.visible) {
+            this._render(ctx);
+        }
     };
     DisplayObject.prototype.getWidth = function () {
         return abs(this.width * this.scaleX);
