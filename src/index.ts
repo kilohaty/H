@@ -4,6 +4,7 @@ import Bitmap from './display/bitmap';
 import Text from './display/text';
 import Polygon from './display/polygon';
 import Sprite from './display/sprite';
+import EventTypes from './stage/event-types'
 
 const H = {
   Stage,
@@ -12,6 +13,7 @@ const H = {
   Text,
   Polygon,
   Sprite,
+  EventTypes,
 };
 
 export default H;

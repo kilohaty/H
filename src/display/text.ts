@@ -1,5 +1,7 @@
 import DisplayObject from './display-object';
 import {IDisplayObjectOptions} from './display-object';
+import IPoint from '../utils/point';
+import {isPointInRect} from '../utils/misc';
 import TextHelper from '../utils/text-helper';
 
 export interface ITextOptions extends IDisplayObjectOptions {
@@ -52,21 +54,33 @@ export default class Text extends DisplayObject {
   }
 
   protected _render(ctx: CanvasRenderingContext2D): void {
-    const {x: ox, y: oy} = this.getOriginPoint();
     let dstX = this.scaleX < 0 ? -this.width : 0;
     let dstY = this.scaleY < 0 ? -this.height : 0;
 
     ctx.save();
-    ctx.translate(this.left - ox, this.top - oy);
+    ctx.translate(this.getLeft(), this.getTop());
     ctx.scale(this.scaleX, this.scaleY);
     ctx.textAlign = 'left';
     ctx.textBaseline = 'top';
     ctx.fillStyle = this.color;
     ctx.font = `${this.fontWeight} ${this.fontSize}px ${this.fontFamily}`;
     ctx.fillText(this.text, dstX, dstY);
+    ctx.strokeRect(dstX, dstY, this.width, this.height);
     ctx.restore();
 
     this.updateFlag = false;
+  }
+
+  protected _isPointOnObject(point: IPoint): boolean {
+    return isPointInRect(
+      {
+        left: this.getLeft(),
+        top: this.getTop(),
+        width: this.getWidth(),
+        height: this.getHeight(),
+        angle: 0
+      },
+      point);
   }
 
 }

@@ -1,4 +1,7 @@
 import DisplayObject from '../display/display-object';
+import Bus from '../utils/bus'
+import EventTypes from './event-types';
+import IPoint from '../utils/point';
 
 function createCanvas(width: number = 300, height: number = 150): HTMLCanvasElement {
   const canvas: HTMLCanvasElement = document.createElement('canvas');
@@ -14,11 +17,13 @@ class Stage {
   private ctx: CanvasRenderingContext2D;
   private cacheCanvas: HTMLCanvasElement;
   private cacheCtx: CanvasRenderingContext2D;
+  private lastMouseEnterObjectId: number = null;
   private forceRender: boolean = false;
 
   public width: number;
   public height: number;
   public objects: Array<DisplayObject> = [];
+  public bus: Bus;
 
   public constructor(options: { el: HTMLElement | string, width?: number, height?: number }) {
     const el = options.el;
@@ -45,14 +50,16 @@ class Stage {
     this.cacheCtx = cacheCanvas.getContext('2d');
 
     requestAnimationFrame(this.loopAnim.bind(this));
+
+    this.initBus();
   }
 
-  private loopAnim() {
+  private loopAnim(): void {
     this.renderObjects();
     requestAnimationFrame(this.loopAnim.bind(this));
   }
 
-  private renderObjects() {
+  private renderObjects(): void {
     if (!this.forceRender
       && this.objects.every(el => !el.visible || !el.needUpdate())) {
       return;
@@ -88,6 +95,107 @@ class Stage {
     return this;
   }
 
+  private initBus(): void {
+    this.bus = new Bus();
+    this.container.addEventListener('mouseenter', this.onMouseEnter.bind(this));
+    this.container.addEventListener('mousemove', this.onMouseMove.bind(this));
+    this.container.addEventListener('mousedown', this.onMouseDown.bind(this));
+    this.container.addEventListener('click', this.onClick.bind(this));
+    this.container.addEventListener('mouseup', this.onMouseUp.bind(this));
+    this.container.addEventListener('mouseleave', this.onMouseLeave.bind(this));
+    this.container.addEventListener('contextmenu', this.onContextMenu.bind(this));
+  }
+
+  private onMouseEnter(e): void {
+    this.bus.emit(EventTypes.stage.mouseEnter, {e: e});
+  }
+
+  private onMouseMove(e): void {
+    this.bus.emit(EventTypes.stage.mouseMove, {e: e});
+    const obj = this.getObjectByPoint({x: e.offsetX, y: e.offsetY});
+
+    if (obj) {
+      if (!this.lastMouseEnterObjectId) {
+        this.bus.emit(EventTypes.object.mouseEnter, {e: e, object: obj});
+      } else {
+        if (this.lastMouseEnterObjectId !== obj.id) {
+          const lastObj = this.getObjectById(this.lastMouseEnterObjectId);
+          this.bus.emit(EventTypes.object.mouseLeave, {e: e, object: lastObj});
+          this.bus.emit(EventTypes.object.mouseEnter, {e: e, object: obj});
+        } else {
+          this.bus.emit(EventTypes.object.mouseMove, {e: e, object: obj});
+        }
+      }
+      this.lastMouseEnterObjectId = obj.id;
+    } else {
+      if (this.lastMouseEnterObjectId) {
+        const lastObj = this.getObjectById(this.lastMouseEnterObjectId);
+        this.bus.emit(EventTypes.object.mouseLeave, {e: e, object: lastObj});
+      }
+      this.lastMouseEnterObjectId = null;
+    }
+  }
+
+  private onMouseDown(e): void {
+    if (e.button === 2) return;
+
+    this.bus.emit(EventTypes.stage.mouseDown, {e: e});
+
+    const obj = this.getObjectByPoint({x: e.offsetX, y: e.offsetY});
+    if (obj) {
+      this.bus.emit(EventTypes.object.mouseDown, {e: e, object: obj});
+    }
+  }
+
+  private onClick(e): void {
+    if (e.button === 2) return;
+
+    this.bus.emit(EventTypes.stage.click, {e: e});
+
+    const obj = this.getObjectByPoint({x: e.offsetX, y: e.offsetY});
+    if (obj) {
+      this.bus.emit(EventTypes.object.click, {e: e, object: obj});
+    }
+  }
+
+  private onMouseUp(e): void {
+    if (e.button === 2) return;
+
+    this.bus.emit(EventTypes.stage.mouseUp, {e: e});
+
+    const obj = this.getObjectByPoint({x: e.offsetX, y: e.offsetY});
+    if (obj) {
+      this.bus.emit(EventTypes.object.mouseUp, {e: e, object: obj});
+    }
+  }
+
+  private onMouseLeave(e): void {
+    this.bus.emit(EventTypes.stage.mouseLeave, {e: e});
+  }
+
+  private onContextMenu(e): void {
+    this.bus.emit(EventTypes.stage.contextMenu, {e: e});
+
+    const obj = this.getObjectByPoint({x: e.offsetX, y: e.offsetY});
+    if (obj) {
+      this.bus.emit(EventTypes.object.contextMenu, {e: e, object: obj});
+    }
+  }
+
+  private getObjectById(id: number): DisplayObject {
+    return this.objects.find(obj => obj.id === id)
+  }
+
+  private getObjectByPoint(point: IPoint): DisplayObject {
+    let obj = null;
+    for (let i = this.objects.length - 1; i >= 0; i--) {
+      if (this.objects[i].isPointOnObject(point)) {
+        obj = this.objects[i];
+        break;
+      }
+    }
+    return obj;
+  }
 }
 
 export default Stage;

@@ -1,6 +1,7 @@
 import DisplayObject from './display-object';
 import {IDisplayObjectOptions} from './display-object';
-import {loadImage} from '../utils/misc';
+import {loadImage, isPointInRect} from '../utils/misc';
+import IPoint from "../utils/point";
 
 interface IStatusFrame {
   [index: number]: { x: number, y: number };
@@ -26,6 +27,7 @@ export interface ISpriteOptions extends IDisplayObjectOptions {
 export default class Sprite extends DisplayObject {
   readonly type: string = 'sprite';
 
+  private paused: boolean = false;
   private bitmapSource: HTMLImageElement;
   private lastFrameTime: number = 0;
   private frameIndex: number = 0;
@@ -75,11 +77,12 @@ export default class Sprite extends DisplayObject {
     this.lastFrameTime = 0;
     this.frameIndex = 0;
     this.iteratedCount = 0;
+    this.paused = false;
   }
 
   private isAnimationEnd() {
     const frame = this.frames[this.status];
-    return frame.iterationCount && this.iteratedCount > frame.iterationCount;
+    return this.paused || frame.iterationCount && this.iteratedCount > frame.iterationCount;
   }
 
   protected _render(ctx: CanvasRenderingContext2D): void {
@@ -91,12 +94,11 @@ export default class Sprite extends DisplayObject {
     const now = Date.now();
     const frame = this.frames[this.status];
     const frameData = frame[this.frameIndex];
-    const {x: ox, y: oy} = this.getOriginPoint();
     let dstX = this.scaleX < 0 ? -this.width : 0;
     let dstY = this.scaleY < 0 ? -this.height : 0;
 
     ctx.save();
-    ctx.translate(this.left - ox, this.top - oy);
+    ctx.translate(this.getLeft(), this.getTop());
     ctx.scale(this.scaleX, this.scaleY);
     ctx.drawImage(
       this.bitmapSource,
@@ -124,8 +126,29 @@ export default class Sprite extends DisplayObject {
     this.updateFlag = !this.isAnimationEnd();
   }
 
+  public pause() {
+    this.paused = true;
+  }
+
+  public resume() {
+    this.paused = false;
+    this.updateFlag = true;
+  }
+
   public replay() {
     this.reset();
     this.updateFlag = true;
+  }
+
+  protected _isPointOnObject(point: IPoint): boolean {
+    return isPointInRect(
+      {
+        left: this.getLeft(),
+        top: this.getTop(),
+        width: this.getWidth(),
+        height: this.getHeight(),
+        angle: 0,
+      },
+      point);
   }
 }

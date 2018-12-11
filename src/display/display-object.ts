@@ -81,6 +81,25 @@ export default abstract class DisplayObject {
 
   protected abstract _render(ctx: CanvasRenderingContext2D): void;
 
+  public isPointOnObject(point: IPoint): boolean {
+    return this.visible
+      ? this._isPointOnObject(point)
+      : false;
+  };
+
+  protected abstract _isPointOnObject(point: IPoint): boolean;
+
+  public getLeft(): number {
+    return this.originX === 'center' ? this.left - this.width / 2
+      : this.originX === 'right' ? this.left - this.width : this.left;
+  };
+
+  public getTop(): number {
+    return this.originY === 'center' ? this.top - this.height / 2
+      : this.originY === 'bottom' ? this.top - this.height : this.top;
+  };
+
+
   public getWidth(): number {
     return abs(this.width * this.scaleX);
   };

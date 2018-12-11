@@ -1,6 +1,7 @@
 import DisplayObject from './display-object';
 import {IDisplayObjectOptions} from './display-object';
 import IPoint from '../utils/point';
+import {isPointInPath} from '../utils/misc';
 
 const {min, max} = Math;
 const MIN_EDGE_NUMBER = 3;
@@ -52,12 +53,16 @@ export default class Polygon extends DisplayObject {
       return;
     }
 
-    const {x: ox, y: oy} = this.getOriginPoint();
+    this.__render(ctx);
+    this.updateFlag = false;
+  }
+
+  private __render(ctx: CanvasRenderingContext2D) {
     let dstX = this.scaleX < 0 ? -this.width : 0;
     let dstY = this.scaleY < 0 ? -this.height : 0;
 
     ctx.save();
-    ctx.translate(this.left - ox, this.top - oy);
+    ctx.translate(this.left, this.top);
     ctx.scale(this.scaleX, this.scaleY);
     ctx.lineWidth = this.lineWidth;
     ctx.fillStyle = this.fillColor;
@@ -70,8 +75,10 @@ export default class Polygon extends DisplayObject {
     ctx.stroke();
     ctx.fill();
     ctx.restore();
+  }
 
-    this.updateFlag = false;
+  protected _isPointOnObject(point: IPoint): boolean {
+    return isPointInPath(null, point, this.__render.bind(this));
   }
 
 }

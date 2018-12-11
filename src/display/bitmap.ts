@@ -1,6 +1,6 @@
 import DisplayObject from './display-object';
 import {IDisplayObjectOptions} from './display-object';
-import {loadImage} from '../utils/misc';
+import {loadImage, isPointInRect} from '../utils/misc';
 
 export interface IBitmapOptions extends IDisplayObjectOptions {
   src: string;
@@ -42,17 +42,30 @@ export default class Bitmap extends DisplayObject {
       return;
     }
 
-    const {x: ox, y: oy} = this.getOriginPoint();
     let dstX = this.scaleX < 0 ? -this.width : 0;
     let dstY = this.scaleY < 0 ? -this.height : 0;
 
     ctx.save();
-    ctx.translate(this.left - ox, this.top - oy);
+    ctx.translate(this.getLeft(), this.getTop());
     ctx.scale(this.scaleX, this.scaleY);
     ctx.drawImage(this.bitmapSource, dstX, dstY);
     ctx.restore();
 
     this.updateFlag = false;
+  }
+
+  protected _isPointOnObject(point): boolean {
+    if (!this.bitmapSource) return false;
+
+    return isPointInRect(
+      {
+        left: this.getLeft(),
+        top: this.getTop(),
+        width: this.getWidth(),
+        height: this.getHeight(),
+        angle: 0
+      },
+      point);
   }
 
 }
