@@ -1,5 +1,6 @@
 import DisplayObject from './display-object';
 import { IDisplayObjectOptions } from './display-object';
+import IPoint from "../utils/point";
 interface IStatusFrame {
     [index: number]: {
         x: number;
@@ -22,6 +23,7 @@ export interface ISpriteOptions extends IDisplayObjectOptions {
 }
 export default class Sprite extends DisplayObject {
     readonly type: string;
+    private paused;
     private bitmapSource;
     private lastFrameTime;
     private frameIndex;
@@ -35,6 +37,9 @@ export default class Sprite extends DisplayObject {
     private reset;
     private isAnimationEnd;
     protected _render(ctx: CanvasRenderingContext2D): void;
+    pause(): void;
+    resume(): void;
     replay(): void;
+    protected _isPointOnObject(point: IPoint): boolean;
 }
 export {};

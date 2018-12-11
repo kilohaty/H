@@ -1,5 +1,6 @@
 import * as tslib_1 from "tslib";
 import DisplayObject from './display-object';
+import { isPointInPath } from '../utils/misc';
 var min = Math.min, max = Math.max;
 var MIN_EDGE_NUMBER = 3;
 var Polygon = /** @class */ (function (_super) {
@@ -36,11 +37,14 @@ var Polygon = /** @class */ (function (_super) {
             this.updateFlag = false;
             return;
         }
-        var _a = this.getOriginPoint(), ox = _a.x, oy = _a.y;
+        this.__render(ctx);
+        this.updateFlag = false;
+    };
+    Polygon.prototype.__render = function (ctx) {
         var dstX = this.scaleX < 0 ? -this.width : 0;
         var dstY = this.scaleY < 0 ? -this.height : 0;
         ctx.save();
-        ctx.translate(this.left - ox, this.top - oy);
+        ctx.translate(this.left, this.top);
         ctx.scale(this.scaleX, this.scaleY);
         ctx.lineWidth = this.lineWidth;
         ctx.fillStyle = this.fillColor;
@@ -53,7 +57,9 @@ var Polygon = /** @class */ (function (_super) {
         ctx.stroke();
         ctx.fill();
         ctx.restore();
-        this.updateFlag = false;
+    };
+    Polygon.prototype._isPointOnObject = function (point) {
+        return isPointInPath(null, point, this.__render.bind(this));
     };
     Polygon.updateList = tslib_1.__spread(DisplayObject.updateList, ['points', 'lineWidth', 'strokeColor', 'fillColor']);
     return Polygon;

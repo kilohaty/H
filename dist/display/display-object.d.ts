@@ -31,6 +31,10 @@ export default abstract class DisplayObject {
     needUpdate(): boolean;
     render(ctx: CanvasRenderingContext2D): void;
     protected abstract _render(ctx: CanvasRenderingContext2D): void;
+    isPointOnObject(point: IPoint): boolean;
+    protected abstract _isPointOnObject(point: IPoint): boolean;
+    getLeft(): number;
+    getTop(): number;
     getWidth(): number;
     getHeight(): number;
     getOriginPoint(): IPoint;

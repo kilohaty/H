@@ -1,5 +1,6 @@
 import * as tslib_1 from "tslib";
 import DisplayObject from './display-object';
+import { isPointInRect } from '../utils/misc';
 import TextHelper from '../utils/text-helper';
 var DEFAULT_FONT_FAMILY = '"PingFang SC", Verdana, "Helvetica Neue", "Microsoft Yahei", "Hiragino Sans GB", "Microsoft Sans Serif", "WenQuanYi Micro Hei", sans-serif';
 var Text = /** @class */ (function (_super) {
@@ -31,19 +32,28 @@ var Text = /** @class */ (function (_super) {
         this.height = dimensions.height;
     };
     Text.prototype._render = function (ctx) {
-        var _a = this.getOriginPoint(), ox = _a.x, oy = _a.y;
         var dstX = this.scaleX < 0 ? -this.width : 0;
         var dstY = this.scaleY < 0 ? -this.height : 0;
         ctx.save();
-        ctx.translate(this.left - ox, this.top - oy);
+        ctx.translate(this.getLeft(), this.getTop());
         ctx.scale(this.scaleX, this.scaleY);
         ctx.textAlign = 'left';
         ctx.textBaseline = 'top';
         ctx.fillStyle = this.color;
         ctx.font = this.fontWeight + " " + this.fontSize + "px " + this.fontFamily;
         ctx.fillText(this.text, dstX, dstY);
+        ctx.strokeRect(dstX, dstY, this.width, this.height);
         ctx.restore();
         this.updateFlag = false;
+    };
+    Text.prototype._isPointOnObject = function (point) {
+        return isPointInRect({
+            left: this.getLeft(),
+            top: this.getTop(),
+            width: this.getWidth(),
+            height: this.getHeight(),
+            angle: 0
+        }, point);
     };
     Text.updateList = tslib_1.__spread(DisplayObject.updateList, ['text', 'fontSize', 'fontWeight', 'fontFamily', 'color']);
     return Text;

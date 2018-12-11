@@ -1,6 +1,6 @@
 import * as tslib_1 from "tslib";
 import DisplayObject from './display-object';
-import { loadImage } from '../utils/misc';
+import { loadImage, isPointInRect } from '../utils/misc';
 var Bitmap = /** @class */ (function (_super) {
     tslib_1.__extends(Bitmap, _super);
     function Bitmap(options) {
@@ -44,15 +44,25 @@ var Bitmap = /** @class */ (function (_super) {
             this.updateFlag = false;
             return;
         }
-        var _a = this.getOriginPoint(), ox = _a.x, oy = _a.y;
         var dstX = this.scaleX < 0 ? -this.width : 0;
         var dstY = this.scaleY < 0 ? -this.height : 0;
         ctx.save();
-        ctx.translate(this.left - ox, this.top - oy);
+        ctx.translate(this.getLeft(), this.getTop());
         ctx.scale(this.scaleX, this.scaleY);
         ctx.drawImage(this.bitmapSource, dstX, dstY);
         ctx.restore();
         this.updateFlag = false;
+    };
+    Bitmap.prototype._isPointOnObject = function (point) {
+        if (!this.bitmapSource)
+            return false;
+        return isPointInRect({
+            left: this.getLeft(),
+            top: this.getTop(),
+            width: this.getWidth(),
+            height: this.getHeight(),
+            angle: 0
+        }, point);
     };
     Bitmap.updateList = tslib_1.__spread(DisplayObject.updateList, ['src']);
     return Bitmap;

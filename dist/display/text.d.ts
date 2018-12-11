@@ -1,5 +1,6 @@
 import DisplayObject from './display-object';
 import { IDisplayObjectOptions } from './display-object';
+import IPoint from '../utils/point';
 export interface ITextOptions extends IDisplayObjectOptions {
     text?: string;
     fontSize?: number;
@@ -19,4 +20,5 @@ export default class Text extends DisplayObject {
     protected update(key: string): void;
     private calcDimensions;
     protected _render(ctx: CanvasRenderingContext2D): void;
+    protected _isPointOnObject(point: IPoint): boolean;
 }

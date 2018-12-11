@@ -1,4 +1,6 @@
 import * as tslib_1 from "tslib";
+import Bus from '../utils/bus';
+import EventTypes from './event-types';
 function createCanvas(width, height) {
     if (width === void 0) { width = 300; }
     if (height === void 0) { height = 150; }
@@ -10,6 +12,7 @@ function createCanvas(width, height) {
 }
 var Stage = /** @class */ (function () {
     function Stage(options) {
+        this.lastMouseEnterObjectId = null;
         this.forceRender = false;
         this.objects = [];
         var el = options.el;
@@ -32,6 +35,7 @@ var Stage = /** @class */ (function () {
         this.cacheCanvas = cacheCanvas;
         this.cacheCtx = cacheCanvas.getContext('2d');
         requestAnimationFrame(this.loopAnim.bind(this));
+        this.initBus();
     }
     Stage.prototype.loopAnim = function () {
         this.renderObjects();
@@ -73,6 +77,96 @@ var Stage = /** @class */ (function () {
             }
         }
         return this;
+    };
+    Stage.prototype.initBus = function () {
+        this.bus = new Bus();
+        this.container.addEventListener('mouseenter', this.onMouseEnter.bind(this));
+        this.container.addEventListener('mousemove', this.onMouseMove.bind(this));
+        this.container.addEventListener('mousedown', this.onMouseDown.bind(this));
+        this.container.addEventListener('click', this.onClick.bind(this));
+        this.container.addEventListener('mouseup', this.onMouseUp.bind(this));
+        this.container.addEventListener('mouseleave', this.onMouseLeave.bind(this));
+        this.container.addEventListener('contextmenu', this.onContextMenu.bind(this));
+    };
+    Stage.prototype.onMouseEnter = function (e) {
+        this.bus.emit(EventTypes.stage.mouseEnter, { e: e });
+    };
+    Stage.prototype.onMouseMove = function (e) {
+        this.bus.emit(EventTypes.stage.mouseMove, { e: e });
+        var obj = this.getObjectByPoint({ x: e.offsetX, y: e.offsetY });
+        if (obj) {
+            if (!this.lastMouseEnterObjectId) {
+                this.bus.emit(EventTypes.object.mouseEnter, { e: e, object: obj });
+            }
+            else {
+                if (this.lastMouseEnterObjectId !== obj.id) {
+                    var lastObj = this.getObjectById(this.lastMouseEnterObjectId);
+                    this.bus.emit(EventTypes.object.mouseLeave, { e: e, object: lastObj });
+                    this.bus.emit(EventTypes.object.mouseEnter, { e: e, object: obj });
+                }
+                else {
+                    this.bus.emit(EventTypes.object.mouseMove, { e: e, object: obj });
+                }
+            }
+            this.lastMouseEnterObjectId = obj.id;
+        }
+        else {
+            if (this.lastMouseEnterObjectId) {
+                var lastObj = this.getObjectById(this.lastMouseEnterObjectId);
+                this.bus.emit(EventTypes.object.mouseLeave, { e: e, object: lastObj });
+            }
+            this.lastMouseEnterObjectId = null;
+        }
+    };
+    Stage.prototype.onMouseDown = function (e) {
+        if (e.button === 2)
+            return;
+        this.bus.emit(EventTypes.stage.mouseDown, { e: e });
+        var obj = this.getObjectByPoint({ x: e.offsetX, y: e.offsetY });
+        if (obj) {
+            this.bus.emit(EventTypes.object.mouseDown, { e: e, object: obj });
+        }
+    };
+    Stage.prototype.onClick = function (e) {
+        if (e.button === 2)
+            return;
+        this.bus.emit(EventTypes.stage.click, { e: e });
+        var obj = this.getObjectByPoint({ x: e.offsetX, y: e.offsetY });
+        if (obj) {
+            this.bus.emit(EventTypes.object.click, { e: e, object: obj });
+        }
+    };
+    Stage.prototype.onMouseUp = function (e) {
+        if (e.button === 2)
+            return;
+        this.bus.emit(EventTypes.stage.mouseUp, { e: e });
+        var obj = this.getObjectByPoint({ x: e.offsetX, y: e.offsetY });
+        if (obj) {
+            this.bus.emit(EventTypes.object.mouseUp, { e: e, object: obj });
+        }
+    };
+    Stage.prototype.onMouseLeave = function (e) {
+        this.bus.emit(EventTypes.stage.mouseLeave, { e: e });
+    };
+    Stage.prototype.onContextMenu = function (e) {
+        this.bus.emit(EventTypes.stage.contextMenu, { e: e });
+        var obj = this.getObjectByPoint({ x: e.offsetX, y: e.offsetY });
+        if (obj) {
+            this.bus.emit(EventTypes.object.contextMenu, { e: e, object: obj });
+        }
+    };
+    Stage.prototype.getObjectById = function (id) {
+        return this.objects.find(function (obj) { return obj.id === id; });
+    };
+    Stage.prototype.getObjectByPoint = function (point) {
+        var obj = null;
+        for (var i = this.objects.length - 1; i >= 0; i--) {
+            if (this.objects[i].isPointOnObject(point)) {
+                obj = this.objects[i];
+                break;
+            }
+        }
+        return obj;
     };
     return Stage;
 }());

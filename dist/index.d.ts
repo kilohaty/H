@@ -11,5 +11,25 @@ declare const H: {
     Text: typeof Text;
     Polygon: typeof Polygon;
     Sprite: typeof Sprite;
+    EventTypes: {
+        stage: {
+            mouseEnter: string;
+            mouseMove: string;
+            mouseLeave: string;
+            mouseDown: string;
+            click: string;
+            mouseUp: string;
+            contextMenu: string;
+        };
+        object: {
+            mouseEnter: string;
+            mouseMove: string;
+            mouseLeave: string;
+            mouseDown: string;
+            click: string;
+            mouseUp: string;
+            contextMenu: string;
+        };
+    };
 };
 export default H;

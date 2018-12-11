@@ -1,11 +1,12 @@
 import * as tslib_1 from "tslib";
 import DisplayObject from './display-object';
-import { loadImage } from '../utils/misc';
+import { loadImage, isPointInRect } from '../utils/misc';
 var Sprite = /** @class */ (function (_super) {
     tslib_1.__extends(Sprite, _super);
     function Sprite(options) {
         var _this = _super.call(this, null) || this;
         _this.type = 'sprite';
+        _this.paused = false;
         _this.lastFrameTime = 0;
         _this.frameIndex = 0;
         _this.iteratedCount = 0;
@@ -59,10 +60,11 @@ var Sprite = /** @class */ (function (_super) {
         this.lastFrameTime = 0;
         this.frameIndex = 0;
         this.iteratedCount = 0;
+        this.paused = false;
     };
     Sprite.prototype.isAnimationEnd = function () {
         var frame = this.frames[this.status];
-        return frame.iterationCount && this.iteratedCount > frame.iterationCount;
+        return this.paused || frame.iterationCount && this.iteratedCount > frame.iterationCount;
     };
     Sprite.prototype._render = function (ctx) {
         if (!this.bitmapSource) {
@@ -72,11 +74,10 @@ var Sprite = /** @class */ (function (_super) {
         var now = Date.now();
         var frame = this.frames[this.status];
         var frameData = frame[this.frameIndex];
-        var _a = this.getOriginPoint(), ox = _a.x, oy = _a.y;
         var dstX = this.scaleX < 0 ? -this.width : 0;
         var dstY = this.scaleY < 0 ? -this.height : 0;
         ctx.save();
-        ctx.translate(this.left - ox, this.top - oy);
+        ctx.translate(this.getLeft(), this.getTop());
         ctx.scale(this.scaleX, this.scaleY);
         ctx.drawImage(this.bitmapSource, frameData.x, frameData.y, this.width, this.height, dstX, dstY, this.width, this.height);
         ctx.restore();
@@ -93,9 +94,25 @@ var Sprite = /** @class */ (function (_super) {
         }
         this.updateFlag = !this.isAnimationEnd();
     };
+    Sprite.prototype.pause = function () {
+        this.paused = true;
+    };
+    Sprite.prototype.resume = function () {
+        this.paused = false;
+        this.updateFlag = true;
+    };
     Sprite.prototype.replay = function () {
         this.reset();
         this.updateFlag = true;
+    };
+    Sprite.prototype._isPointOnObject = function (point) {
+        return isPointInRect({
+            left: this.getLeft(),
+            top: this.getTop(),
+            width: this.getWidth(),
+            height: this.getHeight(),
+            angle: 0,
+        }, point);
     };
     Sprite.updateList = tslib_1.__spread(DisplayObject.updateList, ['src', 'frames', 'status']);
     return Sprite;

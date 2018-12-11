@@ -18,4 +18,6 @@ export default class Polygon extends DisplayObject {
     protected update(key: string): void;
     private calcDimensions;
     protected _render(ctx: CanvasRenderingContext2D): void;
+    private __render;
+    protected _isPointOnObject(point: IPoint): boolean;
 }

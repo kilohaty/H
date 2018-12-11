@@ -11,4 +11,5 @@ export default class Bitmap extends DisplayObject {
     constructor(options: IBitmapOptions);
     protected update(key: string): Promise<void>;
     protected _render(ctx: CanvasRenderingContext2D): void;
+    protected _isPointOnObject(point: any): boolean;
 }

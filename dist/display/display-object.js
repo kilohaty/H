@@ -52,6 +52,22 @@ var DisplayObject = /** @class */ (function () {
             this._render(ctx);
         }
     };
+    DisplayObject.prototype.isPointOnObject = function (point) {
+        return this.visible
+            ? this._isPointOnObject(point)
+            : false;
+    };
+    ;
+    DisplayObject.prototype.getLeft = function () {
+        return this.originX === 'center' ? this.left - this.width / 2
+            : this.originX === 'right' ? this.left - this.width : this.left;
+    };
+    ;
+    DisplayObject.prototype.getTop = function () {
+        return this.originY === 'center' ? this.top - this.height / 2
+            : this.originY === 'bottom' ? this.top - this.height : this.top;
+    };
+    ;
     DisplayObject.prototype.getWidth = function () {
         return abs(this.width * this.scaleX);
     };
