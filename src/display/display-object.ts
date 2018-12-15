@@ -38,6 +38,11 @@ export default abstract class DisplayObject {
     this.id = UID.gen();
     this.proxy = new Proxy(this, {
       get: (target, key, receiver) => {
+        if (key === 'toJSON') {
+          return function() {
+            return Object.assign({}, target, {proxy: undefined});
+          }
+        }
         return Reflect.get(target, key, receiver);
       },
       set: (target, key, value, receiver) => {
