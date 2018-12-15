@@ -38,9 +38,9 @@ var Bus = /** @class */ (function () {
             var fnInfo = eventLists[i];
             var fn = fnInfo.fn;
             var onlyOnce = fnInfo.onlyOnce;
-            fn.apply(this, data);
+            fn.call(this, data);
             if (onlyOnce) {
-                eventLists.splice(i, 1);
+                eventLists.splice(i--, 1);
             }
         }
         return this;

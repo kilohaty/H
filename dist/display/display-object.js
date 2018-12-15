@@ -17,6 +17,11 @@ var DisplayObject = /** @class */ (function () {
         this.id = UID.gen();
         this.proxy = new Proxy(this, {
             get: function (target, key, receiver) {
+                if (key === 'toJSON') {
+                    return function () {
+                        return Object.assign({}, target, { proxy: undefined });
+                    };
+                }
                 return Reflect.get(target, key, receiver);
             },
             set: function (target, key, value, receiver) {
