@@ -53,9 +53,9 @@ class Bus {
       const fn = fnInfo.fn;
       const onlyOnce = fnInfo.onlyOnce;
 
-      fn.apply(this, data);
+      fn.call(this, data);
       if (onlyOnce) {
-        eventLists.splice(i, 1);
+        eventLists.splice(i--, 1);
       }
     }
 
