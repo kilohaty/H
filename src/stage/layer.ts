@@ -75,8 +75,10 @@ export default class Layer {
     }
   }
 
-  public on(type: string, fn: Function, onlyOnce: boolean = false): void {
+  public on(type: string, fn: Function, onlyOnce: boolean = false): Layer {
     this.bus.on(type, fn, onlyOnce);
+
+    return this;
   }
 
   public onMouseEnter(e): void {
