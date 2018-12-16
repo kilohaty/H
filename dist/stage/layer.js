@@ -65,6 +65,7 @@ var Layer = /** @class */ (function () {
     Layer.prototype.on = function (type, fn, onlyOnce) {
         if (onlyOnce === void 0) { onlyOnce = false; }
         this.bus.on(type, fn, onlyOnce);
+        return this;
     };
     Layer.prototype.onMouseEnter = function (e) {
         this.bus.emit(EventTypes.stage.mouseEnter, { e: e });

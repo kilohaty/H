@@ -21,7 +21,7 @@ export default class Layer {
     add(...objects: DisplayObject[]): Layer;
     removeById(objectId: number): boolean;
     renderObjects(forceRender: boolean): void;
-    on(type: string, fn: Function, onlyOnce?: boolean): void;
+    on(type: string, fn: Function, onlyOnce?: boolean): Layer;
     onMouseEnter(e: any): void;
     onMouseMove(e: any): void;
     onMouseDown(e: any): void;
