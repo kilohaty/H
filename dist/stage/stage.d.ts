@@ -1,41 +1,18 @@
-import DisplayObject from '../display/display-object';
-import Bus from '../utils/bus';
+import Layer from './layer';
 declare class Stage {
     private container;
-    private canvas;
-    private ctx;
-    private cacheCanvas;
-    private cacheCtx;
-    private lastMouseEnterObjectId;
     private forceRender;
+    layers: Array<Layer>;
     width: number;
     height: number;
-    objects: Array<DisplayObject>;
-    bus: Bus;
     constructor(options: {
         el: HTMLElement | string;
         width?: number;
         height?: number;
+        layerNumber?: number;
     });
     private loopAnim;
     private renderObjects;
-    /**
-     * add object to stage
-     */
-    add(...objects: DisplayObject[]): Stage;
-    /**
-     * remove object from stage by object id
-     */
-    remove(objectId: number): Stage;
-    private initBus;
-    private onMouseEnter;
-    private onMouseMove;
-    private onMouseDown;
-    private onClick;
-    private onMouseUp;
-    private onMouseLeave;
-    private onContextMenu;
-    private getObjectById;
-    private getObjectByPoint;
+    private initEvents;
 }
 export default Stage;
