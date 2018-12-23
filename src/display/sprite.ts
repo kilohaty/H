@@ -82,7 +82,7 @@ export default class Sprite extends DisplayObject {
 
   private isAnimationEnd() {
     const frame = this.frames[this.status];
-    return this.paused || frame.iterationCount && this.iteratedCount > frame.iterationCount;
+    return this.paused || frame.iterationCount && this.iteratedCount >= frame.iterationCount;
   }
 
   protected _render(ctx: CanvasRenderingContext2D): void {
@@ -114,6 +114,7 @@ export default class Sprite extends DisplayObject {
 
     if (!this.lastFrameTime) {
       this.lastFrameTime = now;
+      this.iteratedCount++;
     } else if (now - this.lastFrameTime >= frame.frameDuration) {
       this.frameIndex++;
       this.lastFrameTime = now;
