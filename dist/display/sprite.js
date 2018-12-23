@@ -64,7 +64,7 @@ var Sprite = /** @class */ (function (_super) {
     };
     Sprite.prototype.isAnimationEnd = function () {
         var frame = this.frames[this.status];
-        return this.paused || frame.iterationCount && this.iteratedCount > frame.iterationCount;
+        return this.paused || frame.iterationCount && this.iteratedCount >= frame.iterationCount;
     };
     Sprite.prototype._render = function (ctx) {
         if (!this.bitmapSource) {
@@ -83,6 +83,7 @@ var Sprite = /** @class */ (function (_super) {
         ctx.restore();
         if (!this.lastFrameTime) {
             this.lastFrameTime = now;
+            this.iteratedCount++;
         }
         else if (now - this.lastFrameTime >= frame.frameDuration) {
             this.frameIndex++;
