@@ -7,6 +7,6 @@ declare function rotatePoint(origin: IPoint, degrees: number, point: IPoint): {
     x: number;
     y: number;
 };
-declare function isPointInPath(points: Array<IPoint>, { x, y }: IPoint, renderFunction?: Function): boolean;
-declare function isPointInRect(rect: IRect, { x, y }: IPoint): any;
+declare function isPointInPath({ x, y }: IPoint, renderFunction?: Function, points?: Array<IPoint>): boolean;
+declare function isPointInRect(rect: IRect, { x, y }: IPoint): boolean;
 export { loadImage, degreesToRadians, radiansToDegrees, rotatePoint, isPointInPath, isPointInRect, };

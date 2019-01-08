@@ -9,6 +9,8 @@ export interface IDisplayObjectOptions {
     originY?: 'top' | 'center' | 'bottom';
     scaleX?: number;
     scaleY?: number;
+    angle?: boolean;
+    debug?: boolean;
 }
 export default abstract class DisplayObject {
     readonly type: string;
@@ -24,6 +26,8 @@ export default abstract class DisplayObject {
     originY: 'top' | 'center' | 'bottom';
     scaleX: number;
     scaleY: number;
+    angle: number;
+    debug: boolean;
     static updateList: Array<string>;
     protected constructor(options: IDisplayObjectOptions);
     protected update(key: string): void;
@@ -33,9 +37,9 @@ export default abstract class DisplayObject {
     protected abstract _render(ctx: CanvasRenderingContext2D): void;
     isPointOnObject(point: IPoint): boolean;
     protected abstract _isPointOnObject(point: IPoint): boolean;
-    getLeft(): number;
-    getTop(): number;
+    protected renderDebug(ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number): void;
+    getOriginLeft(): number;
+    getOriginTop(): number;
     getWidth(): number;
     getHeight(): number;
-    getOriginPoint(): IPoint;
 }

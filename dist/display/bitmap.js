@@ -1,6 +1,6 @@
 import * as tslib_1 from "tslib";
 import DisplayObject from './display-object';
-import { loadImage, isPointInRect } from '../utils/misc';
+import { loadImage, isPointInRect, degreesToRadians } from '../utils/misc';
 var Bitmap = /** @class */ (function (_super) {
     tslib_1.__extends(Bitmap, _super);
     function Bitmap(options) {
@@ -47,9 +47,17 @@ var Bitmap = /** @class */ (function (_super) {
         var dstX = this.scaleX < 0 ? -this.width : 0;
         var dstY = this.scaleY < 0 ? -this.height : 0;
         ctx.save();
-        ctx.translate(this.getLeft(), this.getTop());
+        if (this.angle) {
+            ctx.translate(this.left, this.top);
+            ctx.rotate(degreesToRadians(this.angle));
+            ctx.translate(this.getOriginLeft() - this.left, this.getOriginTop() - this.top);
+        }
+        else {
+            ctx.translate(this.getOriginLeft(), this.getOriginTop());
+        }
         ctx.scale(this.scaleX, this.scaleY);
         ctx.drawImage(this.bitmapSource, dstX, dstY);
+        this.renderDebug(ctx, dstX, dstY, this.width, this.height);
         ctx.restore();
         this.updateFlag = false;
     };
@@ -57,11 +65,13 @@ var Bitmap = /** @class */ (function (_super) {
         if (!this.bitmapSource)
             return false;
         return isPointInRect({
-            left: this.getLeft(),
-            top: this.getTop(),
+            rotateOriginLeft: this.left,
+            rotateOriginTop: this.top,
+            left: this.getOriginLeft(),
+            top: this.getOriginTop(),
             width: this.getWidth(),
             height: this.getHeight(),
-            angle: 0
+            angle: this.angle
         }, point);
     };
     Bitmap.updateList = tslib_1.__spread(DisplayObject.updateList, ['src']);

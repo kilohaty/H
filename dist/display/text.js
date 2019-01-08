@@ -1,6 +1,6 @@
 import * as tslib_1 from "tslib";
 import DisplayObject from './display-object';
-import { isPointInRect } from '../utils/misc';
+import { degreesToRadians, isPointInRect } from '../utils/misc';
 import TextHelper from '../utils/text-helper';
 var DEFAULT_FONT_FAMILY = '"PingFang SC", Verdana, "Helvetica Neue", "Microsoft Yahei", "Hiragino Sans GB", "Microsoft Sans Serif", "WenQuanYi Micro Hei", sans-serif';
 var Text = /** @class */ (function (_super) {
@@ -35,24 +35,33 @@ var Text = /** @class */ (function (_super) {
         var dstX = this.scaleX < 0 ? -this.width : 0;
         var dstY = this.scaleY < 0 ? -this.height : 0;
         ctx.save();
-        ctx.translate(this.getLeft(), this.getTop());
+        if (this.angle) {
+            ctx.translate(this.left, this.top);
+            ctx.rotate(degreesToRadians(this.angle));
+            ctx.translate(this.getOriginLeft() - this.left, this.getOriginTop() - this.top);
+        }
+        else {
+            ctx.translate(this.getOriginLeft(), this.getOriginTop());
+        }
         ctx.scale(this.scaleX, this.scaleY);
         ctx.textAlign = 'left';
         ctx.textBaseline = 'top';
         ctx.fillStyle = this.color;
         ctx.font = this.fontWeight + " " + this.fontSize + "px " + this.fontFamily;
         ctx.fillText(this.text, dstX, dstY);
-        ctx.strokeRect(dstX, dstY, this.width, this.height);
+        this.renderDebug(ctx, dstX, dstY, this.width, this.height);
         ctx.restore();
         this.updateFlag = false;
     };
     Text.prototype._isPointOnObject = function (point) {
         return isPointInRect({
-            left: this.getLeft(),
-            top: this.getTop(),
+            rotateOriginLeft: this.left,
+            rotateOriginTop: this.top,
+            left: this.getOriginLeft(),
+            top: this.getOriginTop(),
             width: this.getWidth(),
             height: this.getHeight(),
-            angle: 0
+            angle: this.angle
         }, point);
     };
     Text.updateList = tslib_1.__spread(DisplayObject.updateList, ['text', 'fontSize', 'fontWeight', 'fontFamily', 'color']);

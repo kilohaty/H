@@ -1,6 +1,6 @@
 import * as tslib_1 from "tslib";
 import DisplayObject from './display-object';
-import { isPointInPath } from '../utils/misc';
+import { degreesToRadians, isPointInPath } from '../utils/misc';
 var min = Math.min, max = Math.max;
 var MIN_EDGE_NUMBER = 3;
 var Polygon = /** @class */ (function (_super) {
@@ -37,14 +37,22 @@ var Polygon = /** @class */ (function (_super) {
             this.updateFlag = false;
             return;
         }
-        this.__render(ctx);
+        ctx.save();
+        this.__render(ctx, true);
         this.updateFlag = false;
     };
-    Polygon.prototype.__render = function (ctx) {
+    Polygon.prototype.__render = function (ctx, renderDebug) {
+        if (renderDebug === void 0) { renderDebug = false; }
         var dstX = this.scaleX < 0 ? -this.width : 0;
         var dstY = this.scaleY < 0 ? -this.height : 0;
-        ctx.save();
-        ctx.translate(this.left, this.top);
+        if (this.angle) {
+            ctx.translate(this.left, this.top);
+            ctx.rotate(degreesToRadians(this.angle));
+            ctx.translate(this.getOriginLeft() - this.left, this.getOriginTop() - this.top);
+        }
+        else {
+            ctx.translate(this.getOriginLeft(), this.getOriginTop());
+        }
         ctx.scale(this.scaleX, this.scaleY);
         ctx.lineWidth = this.lineWidth;
         ctx.fillStyle = this.fillColor;
@@ -56,10 +64,12 @@ var Polygon = /** @class */ (function (_super) {
         ctx.closePath();
         ctx.stroke();
         ctx.fill();
-        ctx.restore();
+        if (renderDebug) {
+            this.renderDebug(ctx, dstX, dstY, this.width, this.height);
+        }
     };
     Polygon.prototype._isPointOnObject = function (point) {
-        return isPointInPath(null, point, this.__render.bind(this));
+        return isPointInPath(point, this.__render.bind(this));
     };
     Polygon.updateList = tslib_1.__spread(DisplayObject.updateList, ['points', 'lineWidth', 'strokeColor', 'fillColor']);
     return Polygon;

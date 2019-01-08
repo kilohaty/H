@@ -24,7 +24,7 @@ function rotatePoint(origin, degrees, point) {
     var y = (x1 - x2) * sin(radians) + (y1 - y2) * cos(radians) + y2;
     return { x: x, y: y };
 }
-function isPointInPath(points, _a, renderFunction) {
+function isPointInPath(_a, renderFunction, points) {
     var x = _a.x, y = _a.y;
     var res = false;
     CCPool.get(function (_a) {
@@ -33,28 +33,28 @@ function isPointInPath(points, _a, renderFunction) {
             renderFunction(ctx);
         }
         else {
-            points.forEach(function (p, i) { return ctx[i ? 'lineTo' : 'moveTo'](p.x, p.y); });
+            (points || []).forEach(function (p, i) { return ctx[i ? 'lineTo' : 'moveTo'](p.x, p.y); });
         }
         res = ctx.isPointInPath(x, y);
     });
     return res;
 }
 function isPointInRect(rect, _a) {
-    var _this = this;
     var x = _a.x, y = _a.y;
+    if (rect.angle) {
+        var renderFunction = function (ctx) {
+            ctx.translate(rect.rotateOriginLeft, rect.rotateOriginTop);
+            ctx.rotate(degreesToRadians(rect.angle));
+            ctx.translate(rect.left - rect.rotateOriginLeft, rect.top - rect.rotateOriginTop);
+            ctx.rect(0, 0, rect.width, rect.height);
+            ctx.stroke();
+        };
+        return isPointInPath({ x: x, y: y }, renderFunction);
+    }
     var left = rect.left;
     var right = rect.left + rect.width;
     var top = rect.top;
     var bottom = rect.top + rect.height;
-    if (rect.angle) {
-        var points = [
-            { x: left, y: top },
-            { x: right, y: top },
-            { x: right, y: bottom },
-            { x: left, y: bottom },
-        ].map(function (point) { return _this.rotatePoint({ x: left, y: top }, rect.angle, point); });
-        return this.isPointInPath(points, { x: x, y: y });
-    }
     return x >= left && x <= right && y >= top && y <= bottom;
 }
 export { loadImage, degreesToRadians, radiansToDegrees, rotatePoint, isPointInPath, isPointInRect, };

@@ -14,6 +14,8 @@ var DisplayObject = /** @class */ (function () {
         this.originY = 'top';
         this.scaleX = 1;
         this.scaleY = 1;
+        this.angle = 0;
+        this.debug = false;
         this.id = UID.gen();
         this.proxy = new Proxy(this, {
             get: function (target, key, receiver) {
@@ -63,14 +65,21 @@ var DisplayObject = /** @class */ (function () {
             : false;
     };
     ;
-    DisplayObject.prototype.getLeft = function () {
-        return this.originX === 'center' ? this.left - this.width / 2
-            : this.originX === 'right' ? this.left - this.width : this.left;
+    DisplayObject.prototype.renderDebug = function (ctx, x, y, width, height) {
+        if (this.debug) {
+            ctx.lineWidth = 1;
+            ctx.strokeStyle = 'black';
+            ctx.strokeRect(x, y, width, height);
+        }
+    };
+    DisplayObject.prototype.getOriginLeft = function () {
+        return this.originX === 'center' ? this.left - this.getWidth() / 2
+            : this.originX === 'right' ? this.left - this.getWidth() : this.left;
     };
     ;
-    DisplayObject.prototype.getTop = function () {
-        return this.originY === 'center' ? this.top - this.height / 2
-            : this.originY === 'bottom' ? this.top - this.height : this.top;
+    DisplayObject.prototype.getOriginTop = function () {
+        return this.originY === 'center' ? this.top - this.getHeight() / 2
+            : this.originY === 'bottom' ? this.top - this.getHeight() : this.top;
     };
     ;
     DisplayObject.prototype.getWidth = function () {
@@ -81,16 +90,7 @@ var DisplayObject = /** @class */ (function () {
         return abs(this.height * this.scaleY);
     };
     ;
-    DisplayObject.prototype.getOriginPoint = function () {
-        var x = this.originX === 'center' ? this.width / 2
-            : this.originX === 'right' ? this.width : 0;
-        var y = this.originY === 'center' ? this.height / 2
-            : this.originY === 'bottom' ? this.height : 0;
-        x = abs(x * this.scaleX);
-        y = abs(y * this.scaleY);
-        return { x: x, y: y };
-    };
-    DisplayObject.updateList = ['visible', 'left', 'top', 'originX', 'originY'];
+    DisplayObject.updateList = ['visible', 'left', 'top', 'originX', 'originY', 'angle', 'debug'];
     return DisplayObject;
 }());
 export default DisplayObject;
