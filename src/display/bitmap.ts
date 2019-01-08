@@ -1,6 +1,6 @@
 import DisplayObject from './display-object';
 import {IDisplayObjectOptions} from './display-object';
-import {loadImage, isPointInRect} from '../utils/misc';
+import {loadImage, isPointInRect, degreesToRadians} from '../utils/misc';
 
 export interface IBitmapOptions extends IDisplayObjectOptions {
   src: string;
@@ -46,9 +46,16 @@ export default class Bitmap extends DisplayObject {
     let dstY = this.scaleY < 0 ? -this.height : 0;
 
     ctx.save();
-    ctx.translate(this.getLeft(), this.getTop());
+    if (this.angle) {
+      ctx.translate(this.left, this.top);
+      ctx.rotate(degreesToRadians(this.angle));
+      ctx.translate(this.getOriginLeft() - this.left, this.getOriginTop() - this.top);
+    } else {
+      ctx.translate(this.getOriginLeft(), this.getOriginTop());
+    }
     ctx.scale(this.scaleX, this.scaleY);
     ctx.drawImage(this.bitmapSource, dstX, dstY);
+    this.renderDebug(ctx, dstX, dstY, this.width, this.height);
     ctx.restore();
 
     this.updateFlag = false;
@@ -59,11 +66,13 @@ export default class Bitmap extends DisplayObject {
 
     return isPointInRect(
       {
-        left: this.getLeft(),
-        top: this.getTop(),
+        rotateOriginLeft: this.left,
+        rotateOriginTop: this.top,
+        left: this.getOriginLeft(),
+        top: this.getOriginTop(),
         width: this.getWidth(),
         height: this.getHeight(),
-        angle: 0
+        angle: this.angle
       },
       point);
   }

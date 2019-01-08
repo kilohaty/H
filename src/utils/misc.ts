@@ -34,13 +34,13 @@ function rotatePoint(origin: IPoint, degrees: number, point: IPoint) {
   return {x: x, y: y};
 }
 
-function isPointInPath(points: Array<IPoint>, {x, y}: IPoint, renderFunction?: Function): boolean {
+function isPointInPath({x, y}: IPoint, renderFunction?: Function, points?: Array<IPoint>,): boolean {
   let res = false;
   CCPool.get(({ctx}) => {
     if (renderFunction) {
       renderFunction(ctx)
     } else {
-      points.forEach((p, i) => ctx[i ? 'lineTo' : 'moveTo'](p.x, p.y));
+      (points || []).forEach((p, i) => ctx[i ? 'lineTo' : 'moveTo'](p.x, p.y));
     }
     res = ctx.isPointInPath(x, y);
   });
@@ -48,20 +48,21 @@ function isPointInPath(points: Array<IPoint>, {x, y}: IPoint, renderFunction?: F
 }
 
 function isPointInRect(rect: IRect, {x, y}: IPoint) {
+  if (rect.angle) {
+    const renderFunction = function (ctx: CanvasRenderingContext2D) {
+      ctx.translate(rect.rotateOriginLeft, rect.rotateOriginTop);
+      ctx.rotate(degreesToRadians(rect.angle));
+      ctx.translate(rect.left - rect.rotateOriginLeft, rect.top - rect.rotateOriginTop);
+      ctx.rect(0, 0, rect.width, rect.height);
+      ctx.stroke();
+    };
+    return isPointInPath({x: x, y: y}, renderFunction);
+  }
+
   const left = rect.left;
   const right = rect.left + rect.width;
   const top = rect.top;
   const bottom = rect.top + rect.height;
-
-  if (rect.angle) {
-    const points = [
-      {x: left, y: top},
-      {x: right, y: top},
-      {x: right, y: bottom},
-      {x: left, y: bottom},
-    ].map(point => this.rotatePoint({x: left, y: top}, rect.angle, point));
-    return this.isPointInPath(points, {x: x, y: y});
-  }
 
   return x >= left && x <= right && y >= top && y <= bottom;
 }

@@ -1,7 +1,7 @@
 import DisplayObject from './display-object';
 import {IDisplayObjectOptions} from './display-object';
 import IPoint from '../utils/point';
-import {isPointInPath} from '../utils/misc';
+import {degreesToRadians, isPointInPath} from '../utils/misc';
 
 const {min, max} = Math;
 const MIN_EDGE_NUMBER = 3;
@@ -53,16 +53,22 @@ export default class Polygon extends DisplayObject {
       return;
     }
 
-    this.__render(ctx);
+    ctx.save();
+    this.__render(ctx, true);
     this.updateFlag = false;
   }
 
-  private __render(ctx: CanvasRenderingContext2D) {
+  private __render(ctx: CanvasRenderingContext2D, renderDebug: boolean = false) {
     let dstX = this.scaleX < 0 ? -this.width : 0;
     let dstY = this.scaleY < 0 ? -this.height : 0;
 
-    ctx.save();
-    ctx.translate(this.left, this.top);
+    if (this.angle) {
+      ctx.translate(this.left, this.top);
+      ctx.rotate(degreesToRadians(this.angle));
+      ctx.translate(this.getOriginLeft() - this.left, this.getOriginTop() - this.top);
+    } else {
+      ctx.translate(this.getOriginLeft(), this.getOriginTop());
+    }
     ctx.scale(this.scaleX, this.scaleY);
     ctx.lineWidth = this.lineWidth;
     ctx.fillStyle = this.fillColor;
@@ -74,11 +80,13 @@ export default class Polygon extends DisplayObject {
     ctx.closePath();
     ctx.stroke();
     ctx.fill();
-    ctx.restore();
+    if (renderDebug) {
+      this.renderDebug(ctx, dstX, dstY, this.width, this.height);
+    }
   }
 
   protected _isPointOnObject(point: IPoint): boolean {
-    return isPointInPath(null, point, this.__render.bind(this));
+    return isPointInPath(point, this.__render.bind(this));
   }
 
 }

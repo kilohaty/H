@@ -13,6 +13,8 @@ export interface IDisplayObjectOptions {
   originY?: 'top' | 'center' | 'bottom';
   scaleX?: number;
   scaleY?: number;
+  angle?: boolean;
+  debug?: boolean;
 }
 
 export default abstract class DisplayObject {
@@ -31,15 +33,17 @@ export default abstract class DisplayObject {
   public originY: 'top' | 'center' | 'bottom' = 'top';
   public scaleX: number = 1;
   public scaleY: number = 1;
+  public angle: number = 0;
+  public debug: boolean = false;
 
-  public static updateList: Array<string> = ['visible', 'left', 'top', 'originX', 'originY'];
+  public static updateList: Array<string> = ['visible', 'left', 'top', 'originX', 'originY', 'angle', 'debug'];
 
   protected constructor(options: IDisplayObjectOptions) {
     this.id = UID.gen();
     this.proxy = new Proxy(this, {
       get: (target, key, receiver) => {
         if (key === 'toJSON') {
-          return function() {
+          return function () {
             return Object.assign({}, target, {proxy: undefined});
           }
         }
@@ -94,16 +98,23 @@ export default abstract class DisplayObject {
 
   protected abstract _isPointOnObject(point: IPoint): boolean;
 
-  public getLeft(): number {
-    return this.originX === 'center' ? this.left - this.width / 2
-      : this.originX === 'right' ? this.left - this.width : this.left;
+  protected renderDebug(ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number): void {
+    if (this.debug) {
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = 'black';
+      ctx.strokeRect(x, y, width, height);
+    }
+  }
+
+  public getOriginLeft(): number {
+    return this.originX === 'center' ? this.left - this.getWidth() / 2
+      : this.originX === 'right' ? this.left - this.getWidth() : this.left;
   };
 
-  public getTop(): number {
-    return this.originY === 'center' ? this.top - this.height / 2
-      : this.originY === 'bottom' ? this.top - this.height : this.top;
+  public getOriginTop(): number {
+    return this.originY === 'center' ? this.top - this.getHeight() / 2
+      : this.originY === 'bottom' ? this.top - this.getHeight() : this.top;
   };
-
 
   public getWidth(): number {
     return abs(this.width * this.scaleX);
@@ -112,17 +123,4 @@ export default abstract class DisplayObject {
   public getHeight(): number {
     return abs(this.height * this.scaleY);
   };
-
-  public getOriginPoint(): IPoint {
-    let x = this.originX === 'center' ? this.width / 2
-      : this.originX === 'right' ? this.width : 0;
-    let y = this.originY === 'center' ? this.height / 2
-      : this.originY === 'bottom' ? this.height : 0;
-
-    x = abs(x * this.scaleX);
-    y = abs(y * this.scaleY);
-
-    return {x: x, y: y};
-  }
-
 }

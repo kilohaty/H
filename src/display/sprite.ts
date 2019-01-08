@@ -1,6 +1,6 @@
 import DisplayObject from './display-object';
 import {IDisplayObjectOptions} from './display-object';
-import {loadImage, isPointInRect} from '../utils/misc';
+import {loadImage, isPointInRect, degreesToRadians} from '../utils/misc';
 import IPoint from "../utils/point";
 
 interface IStatusFrame {
@@ -98,7 +98,13 @@ export default class Sprite extends DisplayObject {
     let dstY = this.scaleY < 0 ? -this.height : 0;
 
     ctx.save();
-    ctx.translate(this.getLeft(), this.getTop());
+    if (this.angle) {
+      ctx.translate(this.left, this.top);
+      ctx.rotate(degreesToRadians(this.angle));
+      ctx.translate(this.getOriginLeft() - this.left, this.getOriginTop() - this.top);
+    } else {
+      ctx.translate(this.getOriginLeft(), this.getOriginTop());
+    }
     ctx.scale(this.scaleX, this.scaleY);
     ctx.drawImage(
       this.bitmapSource,
@@ -110,6 +116,7 @@ export default class Sprite extends DisplayObject {
       dstY,
       this.width,
       this.height);
+    this.renderDebug(ctx, dstX, dstY, this.width, this.height);
     ctx.restore();
 
     if (!this.lastFrameTime) {
@@ -144,11 +151,13 @@ export default class Sprite extends DisplayObject {
   protected _isPointOnObject(point: IPoint): boolean {
     return isPointInRect(
       {
-        left: this.getLeft(),
-        top: this.getTop(),
+        rotateOriginLeft: this.left,
+        rotateOriginTop: this.top,
+        left: this.getOriginLeft(),
+        top: this.getOriginTop(),
         width: this.getWidth(),
         height: this.getHeight(),
-        angle: 0,
+        angle: this.angle
       },
       point);
   }
