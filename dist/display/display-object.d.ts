@@ -1,5 +1,6 @@
 import IPoint from '../utils/point';
 export interface IDisplayObjectOptions {
+    layerIndex?: number;
     visible?: boolean;
     left?: number;
     top?: number;
@@ -17,6 +18,7 @@ export default abstract class DisplayObject {
     readonly id: number;
     readonly proxy: any;
     protected updateFlag: boolean;
+    layerIndex: number;
     visible: boolean;
     left: number;
     top: number;
@@ -38,6 +40,7 @@ export default abstract class DisplayObject {
     isPointOnObject(point: IPoint): boolean;
     protected abstract _isPointOnObject(point: IPoint): boolean;
     protected renderDebug(ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number): void;
+    protected renderDevtoolsDebug(ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number): void;
     getOriginLeft(): number;
     getOriginTop(): number;
     getWidth(): number;

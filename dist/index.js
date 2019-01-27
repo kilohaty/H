@@ -5,6 +5,7 @@ import Text from './display/text';
 import Polygon from './display/polygon';
 import Sprite from './display/sprite';
 import EventTypes from './stage/event-types';
+import config from './config';
 var H = {
     Stage: Stage,
     DisplayObject: DisplayObject,
@@ -13,6 +14,7 @@ var H = {
     Polygon: Polygon,
     Sprite: Sprite,
     EventTypes: EventTypes,
+    config: config
 };
 export default H;
 //# sourceMappingURL=index.js.map

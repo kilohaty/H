@@ -1,6 +1,7 @@
 import * as tslib_1 from "tslib";
 import Bus from '../utils/bus';
 import EventTypes from './event-types';
+import devtools from '../devtools';
 function createCanvas(width, height, zIndex) {
     if (width === void 0) { width = 300; }
     if (height === void 0) { height = 150; }
@@ -15,6 +16,7 @@ var Layer = /** @class */ (function () {
     function Layer(options) {
         this.lastMouseEnterObjectId = null;
         this.objects = [];
+        this.forceRender = false;
         this.container = options.container;
         this.width = options.width;
         this.height = options.height;
@@ -31,12 +33,15 @@ var Layer = /** @class */ (function () {
         this.cacheCtx = cacheCanvas.getContext('2d');
     }
     Layer.prototype.add = function () {
+        var _this = this;
         var objects = [];
         for (var _i = 0; _i < arguments.length; _i++) {
             objects[_i] = arguments[_i];
         }
         var _a;
+        objects.forEach(function (object) { return object.layerIndex = _this.layerIndex; });
         (_a = this.objects).push.apply(_a, tslib_1.__spread(objects));
+        devtools.bus.emit('update.stage', null);
         return this;
     };
     Layer.prototype.removeById = function (objectId) {
@@ -48,6 +53,8 @@ var Layer = /** @class */ (function () {
                 break;
             }
         }
+        this.forceRender = true;
+        devtools.bus.emit('update.stage', null);
         return removed;
     };
     Layer.prototype.renderObjects = function (forceRender) {

@@ -38,11 +38,13 @@ var Polygon = /** @class */ (function (_super) {
             return;
         }
         ctx.save();
-        this.__render(ctx, true);
+        this.__render(ctx, true, true);
+        ctx.restore();
         this.updateFlag = false;
     };
-    Polygon.prototype.__render = function (ctx, renderDebug) {
+    Polygon.prototype.__render = function (ctx, renderDebug, renderDevtoolsDebug) {
         if (renderDebug === void 0) { renderDebug = false; }
+        if (renderDevtoolsDebug === void 0) { renderDevtoolsDebug = false; }
         var dstX = this.scaleX < 0 ? -this.width : 0;
         var dstY = this.scaleY < 0 ? -this.height : 0;
         if (this.angle) {
@@ -66,6 +68,9 @@ var Polygon = /** @class */ (function (_super) {
         ctx.fill();
         if (renderDebug) {
             this.renderDebug(ctx, dstX, dstY, this.width, this.height);
+        }
+        if (renderDevtoolsDebug) {
+            this.renderDevtoolsDebug(ctx, dstX, dstY, this.width, this.height);
         }
     };
     Polygon.prototype._isPointOnObject = function (point) {

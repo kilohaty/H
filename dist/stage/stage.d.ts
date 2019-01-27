@@ -2,6 +2,7 @@ import Layer from './layer';
 declare class Stage {
     private container;
     private forceRender;
+    private hookInit;
     layers: Array<Layer>;
     width: number;
     height: number;
@@ -11,7 +12,9 @@ declare class Stage {
         height?: number;
         layerNumber?: number;
     });
+    private initDevtoolsBus;
     private loopAnim;
+    private initHook;
     private renderObjects;
     private initEvents;
 }

@@ -12,6 +12,7 @@ export default class Layer {
     height: number;
     objects: Array<DisplayObject>;
     bus: Bus;
+    forceRender: boolean;
     constructor(options: {
         container: HTMLElement;
         width: number;

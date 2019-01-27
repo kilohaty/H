@@ -1,7 +1,10 @@
 import Layer from './layer';
+import devtools from '../devtools';
+import config from '../config';
 var Stage = /** @class */ (function () {
     function Stage(options) {
         this.forceRender = false;
+        this.hookInit = false;
         this.layers = [];
         var el = options.el;
         var width = +options.width || 300;
@@ -22,16 +25,40 @@ var Stage = /** @class */ (function () {
             this.layers.push(layer);
         }
         this.initEvents();
+        this.initDevtoolsBus();
         requestAnimationFrame(this.loopAnim.bind(this));
     }
+    Stage.prototype.initDevtoolsBus = function () {
+        var _this = this;
+        devtools.bus.on('update.stage', function () {
+            if (devtools.isEnable()) {
+                devtools.bus.emit(devtools.EVENT_TP.UPDATE_STAGE, JSON.stringify(_this));
+            }
+        });
+    };
     Stage.prototype.loopAnim = function () {
         this.renderObjects();
+        this.initHook();
         requestAnimationFrame(this.loopAnim.bind(this));
+    };
+    Stage.prototype.initHook = function () {
+        if (!config.devtools.enable) {
+            return;
+        }
+        if (this.hookInit) {
+            return;
+        }
+        if (devtools.isEnable()) {
+            devtools.setStage(this);
+            devtools.bus.emit(devtools.EVENT_TP.UPDATE_STAGE, JSON.stringify(this));
+            this.hookInit = true;
+        }
     };
     Stage.prototype.renderObjects = function () {
         var _this = this;
         this.layers.forEach(function (layer) {
-            layer.renderObjects(_this.forceRender);
+            layer.renderObjects(_this.forceRender || layer.forceRender);
+            layer.forceRender = false;
         });
         this.forceRender = false;
     };

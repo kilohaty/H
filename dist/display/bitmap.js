@@ -58,6 +58,7 @@ var Bitmap = /** @class */ (function (_super) {
         ctx.scale(this.scaleX, this.scaleY);
         ctx.drawImage(this.bitmapSource, dstX, dstY);
         this.renderDebug(ctx, dstX, dstY, this.width, this.height);
+        this.renderDevtoolsDebug(ctx, dstX, dstY, this.width, this.height);
         ctx.restore();
         this.updateFlag = false;
     };
