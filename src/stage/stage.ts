@@ -1,8 +1,11 @@
 import Layer from './layer';
+import devtools from '../devtools';
+import config from '../config';
 
 class Stage {
   private container: HTMLElement;
   private forceRender: boolean = false;
+  private hookInit: boolean = false;
   public layers: Array<Layer> = [];
   public width: number;
   public height: number;
@@ -30,17 +33,44 @@ class Stage {
     }
 
     this.initEvents();
+    this.initDevtoolsBus();
     requestAnimationFrame(this.loopAnim.bind(this));
+  }
+
+  private initDevtoolsBus(): void {
+    devtools.bus.on('update.stage', () => {
+      if (devtools.isEnable()) {
+        devtools.bus.emit(devtools.EVENT_TP.UPDATE_STAGE, JSON.stringify(this));
+      }
+    });
   }
 
   private loopAnim(): void {
     this.renderObjects();
+    this.initHook();
     requestAnimationFrame(this.loopAnim.bind(this));
+  }
+
+  private initHook() {
+    if (!config.devtools.enable) {
+      return
+    }
+
+    if (this.hookInit) {
+      return;
+    }
+
+    if (devtools.isEnable()) {
+      devtools.setStage(this);
+      devtools.bus.emit(devtools.EVENT_TP.UPDATE_STAGE, JSON.stringify(this));
+      this.hookInit = true;
+    }
   }
 
   private renderObjects(): void {
     this.layers.forEach(layer => {
-      layer.renderObjects(this.forceRender);
+      layer.renderObjects(this.forceRender || layer.forceRender);
+      layer.forceRender = false
     });
     this.forceRender = false;
   }

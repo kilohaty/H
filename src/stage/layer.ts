@@ -2,6 +2,7 @@ import DisplayObject from '../display/display-object';
 import Bus from '../utils/bus';
 import EventTypes from './event-types';
 import IPoint from '../utils/point';
+import devtools from '../devtools';
 
 function createCanvas(width: number = 300, height: number = 150, zIndex: number = 0): HTMLCanvasElement {
   const canvas: HTMLCanvasElement = document.createElement('canvas');
@@ -24,6 +25,7 @@ export default class Layer {
   public height: number;
   public objects: Array<DisplayObject> = [];
   public bus: Bus;
+  public forceRender: boolean = false;
 
   constructor(options: { container: HTMLElement, width: number, height: number, layerIndex: number}) {
     this.container = options.container;
@@ -45,7 +47,11 @@ export default class Layer {
   }
 
   public add(...objects: DisplayObject[]): Layer {
+    objects.forEach(object => object.layerIndex = this.layerIndex);
+
     this.objects.push(...objects);
+
+    devtools.bus.emit('update.stage', null);
 
     return this;
   }
@@ -59,6 +65,9 @@ export default class Layer {
         break;
       }
     }
+
+    this.forceRender = true;
+    devtools.bus.emit('update.stage', null);
 
     return removed;
   }

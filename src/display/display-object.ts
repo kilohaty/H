@@ -1,9 +1,12 @@
 import UID from '../utils/uid';
 import IPoint from '../utils/point';
+import devtools from '../devtools';
+import config from '../config';
 
 const {abs} = Math;
 
 export interface IDisplayObjectOptions {
+  layerIndex?: number;
   visible?: boolean;
   left?: number;
   top?: number;
@@ -24,6 +27,7 @@ export default abstract class DisplayObject {
 
   protected updateFlag: boolean = false;
 
+  public layerIndex: number = 0;
   public visible: boolean = true;
   public left: number = 0;
   public top: number = 0;
@@ -56,6 +60,17 @@ export default abstract class DisplayObject {
             this.update(<string>key);
           }
         }
+
+        // devtools
+        if (key !== 'updateFlag') {
+          if (devtools.isEnable()) {
+            devtools.bus.emit(devtools.EVENT_TP.UPDATE_OBJECT, {
+              layerIndex: this.layerIndex,
+              object: JSON.stringify(this)
+            });
+          }
+        }
+
         return true;
       }
     });
@@ -103,6 +118,15 @@ export default abstract class DisplayObject {
       ctx.lineWidth = 1;
       ctx.strokeStyle = 'black';
       ctx.strokeRect(x, y, width, height);
+    }
+  }
+
+  protected renderDevtoolsDebug(ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number): void {
+    if (devtools.isEnable()) {
+      if (this.id === devtools.getSelectedObjectId()) {
+        ctx.fillStyle = config.devtools.highlightColor;
+        ctx.fillRect(x, y, width, height);
+      }
     }
   }
 

@@ -72,6 +72,7 @@ export default class Text extends DisplayObject {
     ctx.font = `${this.fontWeight} ${this.fontSize}px ${this.fontFamily}`;
     ctx.fillText(this.text, dstX, dstY);
     this.renderDebug(ctx, dstX, dstY, this.width, this.height);
+    this.renderDevtoolsDebug(ctx, dstX, dstY, this.width, this.height);
     ctx.restore();
 
     this.updateFlag = false;

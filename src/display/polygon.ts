@@ -54,11 +54,12 @@ export default class Polygon extends DisplayObject {
     }
 
     ctx.save();
-    this.__render(ctx, true);
+    this.__render(ctx, true, true);
+    ctx.restore();
     this.updateFlag = false;
   }
 
-  private __render(ctx: CanvasRenderingContext2D, renderDebug: boolean = false) {
+  private __render(ctx: CanvasRenderingContext2D, renderDebug: boolean = false, renderDevtoolsDebug: boolean = false) {
     let dstX = this.scaleX < 0 ? -this.width : 0;
     let dstY = this.scaleY < 0 ? -this.height : 0;
 
@@ -82,6 +83,9 @@ export default class Polygon extends DisplayObject {
     ctx.fill();
     if (renderDebug) {
       this.renderDebug(ctx, dstX, dstY, this.width, this.height);
+    }
+    if (renderDevtoolsDebug) {
+      this.renderDevtoolsDebug(ctx, dstX, dstY, this.width, this.height);
     }
   }
 

@@ -117,6 +117,7 @@ export default class Sprite extends DisplayObject {
       this.width,
       this.height);
     this.renderDebug(ctx, dstX, dstY, this.width, this.height);
+    this.renderDevtoolsDebug(ctx, dstX, dstY, this.width, this.height);
     ctx.restore();
 
     if (!this.lastFrameTime) {
