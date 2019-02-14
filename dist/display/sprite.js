@@ -10,6 +10,7 @@ var Sprite = /** @class */ (function (_super) {
         _this.lastFrameTime = 0;
         _this.frameIndex = 0;
         _this.iteratedCount = 0;
+        _this.statusEndCallbacks = {};
         _this.set(options);
         return _this;
     }
@@ -56,6 +57,36 @@ var Sprite = /** @class */ (function (_super) {
             });
         });
     };
+    Sprite.prototype.setStatus = function (status, animationEndCallback, onlyOnce) {
+        if (onlyOnce === void 0) { onlyOnce = true; }
+        if (animationEndCallback) {
+            this.addStatusEndCallback(status, animationEndCallback, onlyOnce);
+        }
+        this.status = status;
+        return this;
+    };
+    Sprite.prototype.addStatusEndCallback = function (status, callbackFn, onlyOnce) {
+        if (!this.statusEndCallbacks[status]) {
+            this.statusEndCallbacks[status] = [];
+        }
+        this.statusEndCallbacks[status].push({
+            fn: callbackFn,
+            onlyOnce: onlyOnce
+        });
+    };
+    Sprite.prototype.onStatusEnd = function (status) {
+        var callbacks = this.statusEndCallbacks[status];
+        if (!callbacks || !callbacks.length) {
+            return;
+        }
+        for (var i = 0; i < callbacks.length; i++) {
+            var _a = callbacks[i], fn = _a.fn, onlyOnce = _a.onlyOnce;
+            if (onlyOnce) {
+                callbacks.splice(i--, 1);
+            }
+            fn && fn();
+        }
+    };
     Sprite.prototype.reset = function () {
         this.lastFrameTime = 0;
         this.frameIndex = 0;
@@ -92,17 +123,20 @@ var Sprite = /** @class */ (function (_super) {
         ctx.restore();
         if (!this.lastFrameTime) {
             this.lastFrameTime = now;
-            this.iteratedCount++;
+            this.frameIndex++;
         }
         else if (now - this.lastFrameTime >= frame.frameDuration) {
-            this.frameIndex++;
             this.lastFrameTime = now;
-            if (this.frameIndex >= frame.length) {
-                this.frameIndex = 0;
-                this.iteratedCount++;
-            }
+            this.frameIndex++;
+        }
+        if (this.frameIndex >= frame.length) {
+            this.frameIndex = 0;
+            this.iteratedCount++;
         }
         this.updateFlag = !this.isAnimationEnd();
+        if (!this.updateFlag) {
+            this.onStatusEnd(this.status);
+        }
     };
     Sprite.prototype.pause = function () {
         this.paused = true;

@@ -28,12 +28,16 @@ export default class Sprite extends DisplayObject {
     private lastFrameTime;
     private frameIndex;
     private iteratedCount;
+    private statusEndCallbacks;
     src: string;
     frames: IFrames;
     status: string;
     static updateList: Array<string>;
     constructor(options: ISpriteOptions);
     protected update(key: string): Promise<void>;
+    setStatus(status: string, animationEndCallback: Function, onlyOnce?: boolean): Sprite;
+    private addStatusEndCallback;
+    private onStatusEnd;
     private reset;
     private isAnimationEnd;
     protected _render(ctx: CanvasRenderingContext2D): void;
