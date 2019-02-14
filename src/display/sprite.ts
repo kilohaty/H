@@ -24,6 +24,10 @@ export interface ISpriteOptions extends IDisplayObjectOptions {
   status: string;
 }
 
+interface IStatusEndCallbacks {
+  [propsName: string]: Array<{ fn: Function, onlyOnce: boolean }>
+}
+
 export default class Sprite extends DisplayObject {
   readonly type: string = 'sprite';
 
@@ -32,6 +36,7 @@ export default class Sprite extends DisplayObject {
   private lastFrameTime: number = 0;
   private frameIndex: number = 0;
   private iteratedCount: number = 0;
+  private statusEndCallbacks: IStatusEndCallbacks = {};
 
   public src: string;
   public frames: IFrames;
@@ -71,6 +76,42 @@ export default class Sprite extends DisplayObject {
     }
 
     this.updateFlag = true;
+  }
+
+  public setStatus(status: string, animationEndCallback: Function, onlyOnce: boolean = true): Sprite {
+    if (animationEndCallback) {
+      this.addStatusEndCallback(status, animationEndCallback, onlyOnce);
+    }
+
+    this.status = status;
+
+    return this
+  }
+
+  private addStatusEndCallback(status: string, callbackFn: Function, onlyOnce: boolean) {
+    if (!this.statusEndCallbacks[status]) {
+      this.statusEndCallbacks[status] = [];
+    }
+    this.statusEndCallbacks[status].push({
+      fn: callbackFn,
+      onlyOnce: onlyOnce
+    });
+  }
+
+  private onStatusEnd(status: string) {
+    const callbacks = this.statusEndCallbacks[status];
+    
+    if (!callbacks || !callbacks.length) {
+      return;
+    }
+
+    for (let i = 0; i < callbacks.length; i++) {
+      const {fn, onlyOnce} = callbacks[i];
+      if (onlyOnce) {
+        callbacks.splice(i--, 1);
+      }
+      fn && fn();
+    }
   }
 
   private reset() {
@@ -122,17 +163,22 @@ export default class Sprite extends DisplayObject {
 
     if (!this.lastFrameTime) {
       this.lastFrameTime = now;
-      this.iteratedCount++;
-    } else if (now - this.lastFrameTime >= frame.frameDuration) {
       this.frameIndex++;
+    } else if (now - this.lastFrameTime >= frame.frameDuration) {
       this.lastFrameTime = now;
-      if (this.frameIndex >= frame.length) {
-        this.frameIndex = 0;
-        this.iteratedCount++;
-      }
+      this.frameIndex++;
+    }
+
+    if (this.frameIndex >= frame.length) {
+      this.frameIndex = 0;
+      this.iteratedCount++;
     }
 
     this.updateFlag = !this.isAnimationEnd();
+
+    if (!this.updateFlag) {
+      this.onStatusEnd(this.status);
+    }
   }
 
   public pause() {
