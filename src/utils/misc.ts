@@ -4,6 +4,31 @@ import CCPool from './cache-canvas-pool';
 
 const {PI, cos, sin} = Math;
 
+function throttle(delay: number, fn: Function, trailing: boolean) {
+  let last = 0;
+  let timer = null;
+
+  return function () {
+    if (timer) {
+      clearTimeout(timer)
+    }
+
+    const context = this;
+    const args = arguments;
+    const current = Date.now();
+
+    if (current - last > delay) {
+      fn.call(context, ...args);
+      last = current
+    } else if (trailing) {
+      timer = setTimeout(function () {
+        fn.call(context, ...args);
+        last = Date.now();
+      }, delay - (current - last));
+    }
+  }
+}
+
 function loadImage(src: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const image = new Image();
@@ -68,6 +93,7 @@ function isPointInRect(rect: IRect, {x, y}: IPoint) {
 }
 
 export {
+  throttle,
   loadImage,
   degreesToRadians,
   radiansToDegrees,

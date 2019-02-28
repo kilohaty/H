@@ -1,6 +1,7 @@
 import Layer from './layer';
 import devtools from '../devtools';
 import config from '../config';
+import {throttle} from '../utils/misc';
 
 class Stage {
   private container: HTMLElement;
@@ -9,6 +10,7 @@ class Stage {
   public layers: Array<Layer> = [];
   public width: number;
   public height: number;
+  public throttleDelay: number = 100;
 
   public constructor(options: { el: HTMLElement | string, width?: number, height?: number, layerNumber?: number }) {
     const el = options.el;
@@ -83,7 +85,8 @@ class Stage {
       },
       {
         name: 'mousemove',
-        layerFuncName: 'onMouseMove'
+        layerFuncName: 'onMouseMove',
+        throttle: true
       },
       {
         name: 'mousedown',
@@ -107,13 +110,15 @@ class Stage {
       },
     ];
 
-    eventMap.forEach(({name, layerFuncName}) => {
-      this.container.addEventListener(name, e => {
+    eventMap.forEach(({name, layerFuncName, throttle: doThrottle}) => {
+      const fn = (e) => {
         for (let i = this.layers.length - 1; i >= 0; i--) {
           const layer = this.layers[i];
           layer[layerFuncName].call(layer, e)
         }
-      });
+      };
+      const handler = doThrottle ? throttle(this.throttleDelay, fn, false) : fn;
+      this.container.addEventListener(name, handler);
     })
   }
 
