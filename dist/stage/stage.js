@@ -1,11 +1,13 @@
 import Layer from './layer';
 import devtools from '../devtools';
 import config from '../config';
+import { throttle } from '../utils/misc';
 var Stage = /** @class */ (function () {
     function Stage(options) {
         this.forceRender = false;
         this.hookInit = false;
         this.layers = [];
+        this.throttleDelay = 100;
         var el = options.el;
         var width = +options.width || 300;
         var height = +options.height || 150;
@@ -71,7 +73,8 @@ var Stage = /** @class */ (function () {
             },
             {
                 name: 'mousemove',
-                layerFuncName: 'onMouseMove'
+                layerFuncName: 'onMouseMove',
+                throttle: true
             },
             {
                 name: 'mousedown',
@@ -95,13 +98,15 @@ var Stage = /** @class */ (function () {
             },
         ];
         eventMap.forEach(function (_a) {
-            var name = _a.name, layerFuncName = _a.layerFuncName;
-            _this.container.addEventListener(name, function (e) {
+            var name = _a.name, layerFuncName = _a.layerFuncName, doThrottle = _a.throttle;
+            var fn = function (e) {
                 for (var i = _this.layers.length - 1; i >= 0; i--) {
                     var layer = _this.layers[i];
                     layer[layerFuncName].call(layer, e);
                 }
-            });
+            };
+            var handler = doThrottle ? throttle(_this.throttleDelay, fn, false) : fn;
+            _this.container.addEventListener(name, handler);
         });
     };
     return Stage;

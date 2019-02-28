@@ -6,6 +6,7 @@ declare class Stage {
     layers: Array<Layer>;
     width: number;
     height: number;
+    throttleDelay: number;
     constructor(options: {
         el: HTMLElement | string;
         width?: number;

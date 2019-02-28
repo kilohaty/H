@@ -1,5 +1,28 @@
+import * as tslib_1 from "tslib";
 import CCPool from './cache-canvas-pool';
 var PI = Math.PI, cos = Math.cos, sin = Math.sin;
+function throttle(delay, fn, trailing) {
+    var last = 0;
+    var timer = null;
+    return function () {
+        if (timer) {
+            clearTimeout(timer);
+        }
+        var context = this;
+        var args = arguments;
+        var current = Date.now();
+        if (current - last > delay) {
+            fn.call.apply(fn, tslib_1.__spread([context], args));
+            last = current;
+        }
+        else if (trailing) {
+            timer = setTimeout(function () {
+                fn.call.apply(fn, tslib_1.__spread([context], args));
+                last = Date.now();
+            }, delay - (current - last));
+        }
+    };
+}
 function loadImage(src) {
     return new Promise(function (resolve, reject) {
         var image = new Image();
@@ -57,5 +80,5 @@ function isPointInRect(rect, _a) {
     var bottom = rect.top + rect.height;
     return x >= left && x <= right && y >= top && y <= bottom;
 }
-export { loadImage, degreesToRadians, radiansToDegrees, rotatePoint, isPointInPath, isPointInRect, };
+export { throttle, loadImage, degreesToRadians, radiansToDegrees, rotatePoint, isPointInPath, isPointInRect, };
 //# sourceMappingURL=misc.js.map
