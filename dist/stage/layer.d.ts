@@ -19,8 +19,11 @@ export default class Layer {
         height: number;
         layerIndex: number;
     });
+    resize(width: number, height: number): Layer;
     add(...objects: DisplayObject[]): Layer;
+    insert(insertIndex: number, ...objects: DisplayObject[]): Layer;
     removeById(objectId: number): boolean;
+    clear(): void;
     renderObjects(forceRender: boolean): void;
     on(type: string, fn: Function, onlyOnce?: boolean): Layer;
     onMouseEnter(e: any): void;

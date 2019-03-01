@@ -32,6 +32,15 @@ var Layer = /** @class */ (function () {
         this.cacheCanvas = cacheCanvas;
         this.cacheCtx = cacheCanvas.getContext('2d');
     }
+    Layer.prototype.resize = function (width, height) {
+        this.canvas.width = width;
+        this.canvas.height = height;
+        this.cacheCanvas.width = width;
+        this.cacheCanvas.height = height;
+        this.width = width;
+        this.height = height;
+        return this;
+    };
     Layer.prototype.add = function () {
         var _this = this;
         var objects = [];
@@ -41,6 +50,18 @@ var Layer = /** @class */ (function () {
         var _a;
         objects.forEach(function (object) { return object.layerIndex = _this.layerIndex; });
         (_a = this.objects).push.apply(_a, tslib_1.__spread(objects));
+        devtools.bus.emit('update.stage', null);
+        return this;
+    };
+    Layer.prototype.insert = function (insertIndex) {
+        var _this = this;
+        var objects = [];
+        for (var _i = 1; _i < arguments.length; _i++) {
+            objects[_i - 1] = arguments[_i];
+        }
+        var _a;
+        objects.forEach(function (object) { return object.layerIndex = _this.layerIndex; });
+        (_a = this.objects).splice.apply(_a, tslib_1.__spread([insertIndex, 0], objects));
         devtools.bus.emit('update.stage', null);
         return this;
     };
@@ -56,6 +77,11 @@ var Layer = /** @class */ (function () {
         this.forceRender = true;
         devtools.bus.emit('update.stage', null);
         return removed;
+    };
+    Layer.prototype.clear = function () {
+        this.objects = [];
+        this.forceRender = true;
+        devtools.bus.emit('update.stage', null);
     };
     Layer.prototype.renderObjects = function (forceRender) {
         var _this = this;

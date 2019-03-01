@@ -1,6 +1,7 @@
 import DisplayObject from './display-object';
 import {IDisplayObjectOptions} from './display-object';
 import {loadImage, isPointInRect, degreesToRadians} from '../utils/misc';
+import IPoint from '../utils/point';
 
 export interface IBitmapOptions extends IDisplayObjectOptions {
   src: string;
@@ -62,7 +63,7 @@ export default class Bitmap extends DisplayObject {
     this.updateFlag = false;
   }
 
-  protected _isPointOnObject(point): boolean {
+  protected _isPointOnObject(point: IPoint): boolean {
     if (!this.bitmapSource) return false;
 
     return isPointInRect(

@@ -30,6 +30,14 @@ var Stage = /** @class */ (function () {
         this.initDevtoolsBus();
         requestAnimationFrame(this.loopAnim.bind(this));
     }
+    Stage.prototype.resize = function (width, height) {
+        this.container.style.width = width + 'px';
+        this.container.style.height = height + 'px';
+        this.width = width;
+        this.height = height;
+        this.layers.forEach(function (layer) { return layer.resize(width, height); });
+        this.forceRender = true;
+    };
     Stage.prototype.initDevtoolsBus = function () {
         var _this = this;
         devtools.bus.on('update.stage', function () {

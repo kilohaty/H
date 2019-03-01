@@ -40,6 +40,15 @@ class Stage {
     requestAnimationFrame(this.loopAnim.bind(this));
   }
 
+  public resize(width: number, height: number): void {
+    this.container.style.width = width + 'px';
+    this.container.style.height = height + 'px';
+    this.width = width;
+    this.height = height;
+    this.layers.forEach(layer => layer.resize(width, height));
+    this.forceRender = true;
+  }
+
   private initDevtoolsBus(): void {
     devtools.bus.on('update.stage', () => {
       if (devtools.isEnable()) {
@@ -115,7 +124,7 @@ class Stage {
       const fn = (e) => {
         for (let i = this.layers.length - 1; i >= 0; i--) {
           const layer = this.layers[i];
-          layer[layerFuncName].call(layer, e)
+          layer[layerFuncName].call(layer, e);
         }
       };
       const handler = doThrottle && this.throttleDelay ? throttle(this.throttleDelay, fn, false) : fn;

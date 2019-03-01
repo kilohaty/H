@@ -40,7 +40,8 @@ export default abstract class DisplayObject {
   public angle: number = 0;
   public debug: boolean = false;
 
-  public static updateList: Array<string> = ['visible', 'left', 'top', 'originX', 'originY', 'angle', 'debug'];
+  public static updateList: Array<string> =
+    ['visible', 'left', 'top', 'originX', 'originY', 'scaleX', 'scaleY', 'angle', 'debug'];
 
   protected constructor(options: IDisplayObjectOptions) {
     this.id = UID.gen();

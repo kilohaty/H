@@ -46,10 +46,31 @@ export default class Layer {
     this.cacheCtx = cacheCanvas.getContext('2d');
   }
 
+  public resize(width: number, height: number): Layer {
+    this.canvas.width = width;
+    this.canvas.height = height;
+    this.cacheCanvas.width = width;
+    this.cacheCanvas.height = height;
+    this.width = width;
+    this.height = height;
+
+    return this;
+  }
+
   public add(...objects: DisplayObject[]): Layer {
     objects.forEach(object => object.layerIndex = this.layerIndex);
 
     this.objects.push(...objects);
+
+    devtools.bus.emit('update.stage', null);
+
+    return this;
+  }
+
+  public insert(insertIndex: number, ...objects: DisplayObject[]): Layer {
+    objects.forEach(object => object.layerIndex = this.layerIndex);
+
+    this.objects.splice(insertIndex, 0, ...objects);
 
     devtools.bus.emit('update.stage', null);
 
@@ -70,6 +91,12 @@ export default class Layer {
     devtools.bus.emit('update.stage', null);
 
     return removed;
+  }
+
+  public clear(): void {
+    this.objects = [];
+    this.forceRender = true;
+    devtools.bus.emit('update.stage', null);
   }
 
   public renderObjects(forceRender: boolean): void {
