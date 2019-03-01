@@ -12,6 +12,7 @@ declare class Stage {
         width?: number;
         height?: number;
         layerNumber?: number;
+        throttleDelay: number;
     });
     resize(width: number, height: number): void;
     private initDevtoolsBus;

@@ -7,7 +7,6 @@ var Stage = /** @class */ (function () {
         this.forceRender = false;
         this.hookInit = false;
         this.layers = [];
-        this.throttleDelay = 100;
         var el = options.el;
         var width = +options.width || 300;
         var height = +options.height || 150;
@@ -17,6 +16,7 @@ var Stage = /** @class */ (function () {
         this.container.style.position = 'relative';
         this.width = width;
         this.height = height;
+        this.throttleDelay = options.throttleDelay || 0;
         for (var i = 0; i < (options.layerNumber || 1); i++) {
             var layer = new Layer({
                 container: this.container,
@@ -113,7 +113,7 @@ var Stage = /** @class */ (function () {
                     layer[layerFuncName].call(layer, e);
                 }
             };
-            var handler = doThrottle ? throttle(_this.throttleDelay, fn, false) : fn;
+            var handler = doThrottle && _this.throttleDelay ? throttle(_this.throttleDelay, fn, false) : fn;
             _this.container.addEventListener(name, handler);
         });
     };
