@@ -110,7 +110,7 @@ var DisplayObject = /** @class */ (function () {
         return abs(this.height * this.scaleY);
     };
     ;
-    DisplayObject.updateList = ['visible', 'left', 'top', 'originX', 'originY', 'angle', 'debug'];
+    DisplayObject.updateList = ['visible', 'left', 'top', 'originX', 'originY', 'scaleX', 'scaleY', 'angle', 'debug'];
     return DisplayObject;
 }());
 export default DisplayObject;

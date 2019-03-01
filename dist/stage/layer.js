@@ -53,6 +53,18 @@ var Layer = /** @class */ (function () {
         devtools.bus.emit('update.stage', null);
         return this;
     };
+    Layer.prototype.insert = function (insertIndex) {
+        var _this = this;
+        var objects = [];
+        for (var _i = 1; _i < arguments.length; _i++) {
+            objects[_i - 1] = arguments[_i];
+        }
+        var _a;
+        objects.forEach(function (object) { return object.layerIndex = _this.layerIndex; });
+        (_a = this.objects).splice.apply(_a, tslib_1.__spread([insertIndex, 0], objects));
+        devtools.bus.emit('update.stage', null);
+        return this;
+    };
     Layer.prototype.removeById = function (objectId) {
         var removed = false;
         for (var i = 0; i < this.objects.length; i++) {
@@ -65,6 +77,11 @@ var Layer = /** @class */ (function () {
         this.forceRender = true;
         devtools.bus.emit('update.stage', null);
         return removed;
+    };
+    Layer.prototype.clear = function () {
+        this.objects = [];
+        this.forceRender = true;
+        devtools.bus.emit('update.stage', null);
     };
     Layer.prototype.renderObjects = function (forceRender) {
         var _this = this;
