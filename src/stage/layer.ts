@@ -46,6 +46,17 @@ export default class Layer {
     this.cacheCtx = cacheCanvas.getContext('2d');
   }
 
+  public resize(width: number, height: number): Layer {
+    this.canvas.width = width;
+    this.canvas.height = height;
+    this.cacheCanvas.width = width;
+    this.cacheCanvas.height = height;
+    this.width = width;
+    this.height = height;
+
+    return this;
+  }
+
   public add(...objects: DisplayObject[]): Layer {
     objects.forEach(object => object.layerIndex = this.layerIndex);
 
