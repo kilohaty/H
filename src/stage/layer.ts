@@ -67,6 +67,16 @@ export default class Layer {
     return this;
   }
 
+  public insert(insertIndex: number, ...objects: DisplayObject[]): Layer {
+    objects.forEach(object => object.layerIndex = this.layerIndex);
+
+    this.objects.splice(insertIndex, 0, ...objects);
+
+    devtools.bus.emit('update.stage', null);
+
+    return this;
+  }
+
   public removeById(objectId: number): boolean {
     let removed = false;
     for (let i = 0; i < this.objects.length; i++) {
@@ -81,6 +91,12 @@ export default class Layer {
     devtools.bus.emit('update.stage', null);
 
     return removed;
+  }
+
+  public clear(): void {
+    this.objects = [];
+    this.forceRender = true;
+    devtools.bus.emit('update.stage', null);
   }
 
   public renderObjects(forceRender: boolean): void {
