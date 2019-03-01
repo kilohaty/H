@@ -13,6 +13,7 @@ declare class Stage {
         height?: number;
         layerNumber?: number;
     });
+    resize(width: number, height: number): void;
     private initDevtoolsBus;
     private loopAnim;
     private initHook;

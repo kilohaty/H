@@ -19,6 +19,7 @@ export default class Layer {
         height: number;
         layerIndex: number;
     });
+    resize(width: number, height: number): Layer;
     add(...objects: DisplayObject[]): Layer;
     removeById(objectId: number): boolean;
     renderObjects(forceRender: boolean): void;

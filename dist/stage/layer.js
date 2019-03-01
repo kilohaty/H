@@ -32,6 +32,15 @@ var Layer = /** @class */ (function () {
         this.cacheCanvas = cacheCanvas;
         this.cacheCtx = cacheCanvas.getContext('2d');
     }
+    Layer.prototype.resize = function (width, height) {
+        this.canvas.width = width;
+        this.canvas.height = height;
+        this.cacheCanvas.width = width;
+        this.cacheCanvas.height = height;
+        this.width = width;
+        this.height = height;
+        return this;
+    };
     Layer.prototype.add = function () {
         var _this = this;
         var objects = [];
