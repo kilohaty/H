@@ -10,9 +10,9 @@ class Stage {
   public layers: Array<Layer> = [];
   public width: number;
   public height: number;
-  public throttleDelay: number = 100;
+  public throttleDelay: number;
 
-  public constructor(options: { el: HTMLElement | string, width?: number, height?: number, layerNumber?: number }) {
+  public constructor(options: { el: HTMLElement | string, width?: number, height?: number, layerNumber?: number, throttleDelay: number }) {
     const el = options.el;
     const width = +options.width || 300;
     const height = +options.height || 150;
@@ -23,6 +23,7 @@ class Stage {
     this.container.style.position = 'relative';
     this.width = width;
     this.height = height;
+    this.throttleDelay = options.throttleDelay || 0;
 
     for (let i = 0; i < (options.layerNumber || 1); i++) {
       const layer = new Layer({
@@ -117,7 +118,7 @@ class Stage {
           layer[layerFuncName].call(layer, e)
         }
       };
-      const handler = doThrottle ? throttle(this.throttleDelay, fn, false) : fn;
+      const handler = doThrottle && this.throttleDelay ? throttle(this.throttleDelay, fn, false) : fn;
       this.container.addEventListener(name, handler);
     })
   }
