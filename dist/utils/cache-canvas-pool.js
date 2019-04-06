@@ -12,10 +12,9 @@ export default (function () {
             cc.setWidth(width || 1);
             cc.setHeight(height || 1);
             cc.ctx.save();
-            fn(cc, function () {
-                cc.ctx.restore();
-                cc.setFree();
-            });
+            fn(cc);
+            cc.ctx.restore();
+            cc.setFree();
         }
     };
 }());
