@@ -83,12 +83,15 @@ var Layer = /** @class */ (function () {
         this.forceRender = true;
         devtools.bus.emit('update.stage', null);
     };
+    Layer.prototype.shouldRender = function () {
+        // 优化：visible 为 false 时，可不做更新
+        return this.objects.some(function (object) {
+            return object.needUpdate();
+        });
+    };
     Layer.prototype.renderObjects = function (forceRender) {
         var _this = this;
-        var shouldRender = this.objects.some(function (object) {
-            return object.visible && object.needUpdate();
-        });
-        if (forceRender || shouldRender) {
+        if (forceRender || this.shouldRender()) {
             this.cacheCtx.clearRect(0, 0, this.width, this.height);
             this.objects.forEach(function (el) { return el.render(_this.cacheCtx); });
             this.ctx.clearRect(0, 0, this.width, this.height);

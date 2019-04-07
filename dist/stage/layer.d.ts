@@ -24,6 +24,7 @@ export default class Layer {
     insert(insertIndex: number, ...objects: DisplayObject[]): Layer;
     removeById(objectId: number): boolean;
     clear(): void;
+    private shouldRender;
     renderObjects(forceRender: boolean): void;
     on(type: string, fn: Function, onlyOnce?: boolean): Layer;
     onMouseEnter(e: any): void;
