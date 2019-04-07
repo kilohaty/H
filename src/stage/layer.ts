@@ -27,7 +27,7 @@ export default class Layer {
   public bus: Bus;
   public forceRender: boolean = false;
 
-  constructor(options: { container: HTMLElement, width: number, height: number, layerIndex: number}) {
+  constructor(options: { container: HTMLElement, width: number, height: number, layerIndex: number }) {
     this.container = options.container;
     this.width = options.width;
     this.height = options.height;
@@ -99,11 +99,15 @@ export default class Layer {
     devtools.bus.emit('update.stage', null);
   }
 
-  public renderObjects(forceRender: boolean): void {
-    const shouldRender = this.objects.some(object => {
-      return object.visible && object.needUpdate();
+  private shouldRender() {
+    // 优化：当 visible 为 false，其他属性变更时，可不做更新
+    return this.objects.some(object => {
+      return object.needUpdate();
     });
-    if (forceRender || shouldRender) {
+  }
+
+  public renderObjects(forceRender: boolean): void {
+    if (forceRender || this.shouldRender()) {
       this.cacheCtx.clearRect(0, 0, this.width, this.height);
       this.objects.forEach(el => el.render(this.cacheCtx));
       this.ctx.clearRect(0, 0, this.width, this.height);
