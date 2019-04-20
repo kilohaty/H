@@ -152,8 +152,6 @@ export default class Layer {
   }
 
   public onMouseDown(e): void {
-    if (e.button === 2) return;
-
     this.bus.emit(EventTypes.stage.mouseDown, {e: e});
 
     const obj = this.getObjectByPoint({x: e.offsetX, y: e.offsetY});
@@ -163,8 +161,6 @@ export default class Layer {
   }
 
   public onClick(e): void {
-    if (e.button === 2) return;
-
     this.bus.emit(EventTypes.stage.click, {e: e});
 
     const obj = this.getObjectByPoint({x: e.offsetX, y: e.offsetY});
@@ -174,8 +170,6 @@ export default class Layer {
   }
 
   public onMouseUp(e): void {
-    if (e.button === 2) return;
-
     this.bus.emit(EventTypes.stage.mouseUp, {e: e});
 
     const obj = this.getObjectByPoint({x: e.offsetX, y: e.offsetY});
