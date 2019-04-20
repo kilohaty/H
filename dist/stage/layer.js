@@ -84,7 +84,7 @@ var Layer = /** @class */ (function () {
         devtools.bus.emit('update.stage', null);
     };
     Layer.prototype.shouldRender = function () {
-        // 优化：visible 为 false 时，可不做更新
+        // 优化：当 visible 为 false，其他属性变更时，可不做更新
         return this.objects.some(function (object) {
             return object.needUpdate();
         });
@@ -134,8 +134,6 @@ var Layer = /** @class */ (function () {
         }
     };
     Layer.prototype.onMouseDown = function (e) {
-        if (e.button === 2)
-            return;
         this.bus.emit(EventTypes.stage.mouseDown, { e: e });
         var obj = this.getObjectByPoint({ x: e.offsetX, y: e.offsetY });
         if (obj) {
@@ -143,8 +141,6 @@ var Layer = /** @class */ (function () {
         }
     };
     Layer.prototype.onClick = function (e) {
-        if (e.button === 2)
-            return;
         this.bus.emit(EventTypes.stage.click, { e: e });
         var obj = this.getObjectByPoint({ x: e.offsetX, y: e.offsetY });
         if (obj) {
@@ -152,8 +148,6 @@ var Layer = /** @class */ (function () {
         }
     };
     Layer.prototype.onMouseUp = function (e) {
-        if (e.button === 2)
-            return;
         this.bus.emit(EventTypes.stage.mouseUp, { e: e });
         var obj = this.getObjectByPoint({ x: e.offsetX, y: e.offsetY });
         if (obj) {
