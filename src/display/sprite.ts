@@ -41,6 +41,7 @@ export default class Sprite extends DisplayObject {
   public src: string;
   public frames: IFrames;
   public status: string;
+  public playbackRate: number = 1;
 
   public static updateList: Array<string> = [...DisplayObject.updateList, 'src', 'frames', 'status'];
 
@@ -100,7 +101,7 @@ export default class Sprite extends DisplayObject {
 
   private onStatusEnd(status: string) {
     const callbacks = this.statusEndCallbacks[status];
-    
+
     if (!callbacks || !callbacks.length) {
       return;
     }
@@ -164,7 +165,7 @@ export default class Sprite extends DisplayObject {
     if (!this.lastFrameTime) {
       this.lastFrameTime = now;
       this.frameIndex++;
-    } else if (now - this.lastFrameTime >= frame.frameDuration) {
+    } else if (now - this.lastFrameTime >= frame.frameDuration / this.playbackRate) {
       this.lastFrameTime = now;
       this.frameIndex++;
     }
