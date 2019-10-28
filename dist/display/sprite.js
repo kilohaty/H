@@ -11,6 +11,7 @@ var Sprite = /** @class */ (function (_super) {
         _this.frameIndex = 0;
         _this.iteratedCount = 0;
         _this.statusEndCallbacks = {};
+        _this.playbackRate = 1;
         _this.set(options);
         return _this;
     }
@@ -125,7 +126,7 @@ var Sprite = /** @class */ (function (_super) {
             this.lastFrameTime = now;
             this.frameIndex++;
         }
-        else if (now - this.lastFrameTime >= frame.frameDuration) {
+        else if (now - this.lastFrameTime >= frame.frameDuration / this.playbackRate) {
             this.lastFrameTime = now;
             this.frameIndex++;
         }

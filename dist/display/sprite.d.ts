@@ -32,6 +32,7 @@ export default class Sprite extends DisplayObject {
     src: string;
     frames: IFrames;
     status: string;
+    playbackRate: number;
     static updateList: Array<string>;
     constructor(options: ISpriteOptions);
     protected update(key: string): Promise<void>;
