@@ -7,6 +7,8 @@ class Stage {
   private container: HTMLElement;
   private forceRender: boolean = false;
   private hookInit: boolean = false;
+  private animationFrameId: number = null;
+  private eventHandlers: { [propsName: string]: EventListener | EventListenerObject } = {};
   public layers: Array<Layer> = [];
   public width: number;
   public height: number;
@@ -37,7 +39,7 @@ class Stage {
 
     this.initEvents();
     this.initDevtoolsBus();
-    requestAnimationFrame(this.loopAnim.bind(this));
+    this.animationFrameId = requestAnimationFrame(this.loopAnim.bind(this));
   }
 
   public resize(width: number, height: number): void {
@@ -60,7 +62,7 @@ class Stage {
   private loopAnim(): void {
     this.renderObjects();
     this.initHook();
-    requestAnimationFrame(this.loopAnim.bind(this));
+    this.animationFrameId = requestAnimationFrame(this.loopAnim.bind(this));
   }
 
   private initHook() {
@@ -128,10 +130,27 @@ class Stage {
         }
       };
       const handler = doThrottle && this.throttleDelay ? throttle(this.throttleDelay, fn, false) : fn;
+      this.eventHandlers[name] = handler;
       this.container.addEventListener(name, handler);
     })
   }
 
+  private removeEvents(): void {
+    for (let type in this.eventHandlers) {
+      if (this.eventHandlers.hasOwnProperty(type)) {
+        this.container.removeEventListener(type, this.eventHandlers[type]);
+      }
+    }
+  }
+
+  private stopAnim(): void {
+    cancelAnimationFrame(this.animationFrameId);
+  }
+
+  public destroy() {
+    this.stopAnim();
+    this.removeEvents();
+  }
 }
 
 export default Stage;
