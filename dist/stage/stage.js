@@ -6,6 +6,8 @@ var Stage = /** @class */ (function () {
     function Stage(options) {
         this.forceRender = false;
         this.hookInit = false;
+        this.animationFrameId = null;
+        this.eventHandlers = {};
         this.layers = [];
         var el = options.el;
         var width = +options.width || 300;
@@ -28,7 +30,7 @@ var Stage = /** @class */ (function () {
         }
         this.initEvents();
         this.initDevtoolsBus();
-        requestAnimationFrame(this.loopAnim.bind(this));
+        this.animationFrameId = requestAnimationFrame(this.loopAnim.bind(this));
     }
     Stage.prototype.resize = function (width, height) {
         this.container.style.width = width + 'px';
@@ -49,7 +51,7 @@ var Stage = /** @class */ (function () {
     Stage.prototype.loopAnim = function () {
         this.renderObjects();
         this.initHook();
-        requestAnimationFrame(this.loopAnim.bind(this));
+        this.animationFrameId = requestAnimationFrame(this.loopAnim.bind(this));
     };
     Stage.prototype.initHook = function () {
         if (!config.devtools.enable) {
@@ -114,8 +116,23 @@ var Stage = /** @class */ (function () {
                 }
             };
             var handler = doThrottle && _this.throttleDelay ? throttle(_this.throttleDelay, fn, false) : fn;
+            _this.eventHandlers[name] = handler;
             _this.container.addEventListener(name, handler);
         });
+    };
+    Stage.prototype.removeEvents = function () {
+        for (var type in this.eventHandlers) {
+            if (this.eventHandlers.hasOwnProperty(type)) {
+                this.container.removeEventListener(type, this.eventHandlers[type]);
+            }
+        }
+    };
+    Stage.prototype.stopAnim = function () {
+        cancelAnimationFrame(this.animationFrameId);
+    };
+    Stage.prototype.destroy = function () {
+        this.stopAnim();
+        this.removeEvents();
     };
     return Stage;
 }());
