@@ -105,6 +105,9 @@ var Sprite = /** @class */ (function (_super) {
         }
         var now = Date.now();
         var frame = this.frames[this.status];
+        if (this.isAnimationEnd()) {
+            this.frameIndex = frame.length - 1;
+        }
         var frameData = frame[this.frameIndex];
         var dstX = this.scaleX < 0 ? -this.width : 0;
         var dstY = this.scaleY < 0 ? -this.height : 0;
