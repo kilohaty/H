@@ -135,6 +135,9 @@ export default class Sprite extends DisplayObject {
 
     const now = Date.now();
     const frame = this.frames[this.status];
+    if (this.isAnimationEnd()) {
+      this.frameIndex = frame.length - 1
+    }
     const frameData = frame[this.frameIndex];
     let dstX = this.scaleX < 0 ? -this.width : 0;
     let dstY = this.scaleY < 0 ? -this.height : 0;
