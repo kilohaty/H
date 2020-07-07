@@ -18,6 +18,7 @@ var DisplayObject = /** @class */ (function () {
         this.scaleX = 1;
         this.scaleY = 1;
         this.angle = 0;
+        this.opacity = 1;
         this.debug = false;
         this.id = UID.gen();
         this.proxy = new Proxy(this, {
@@ -110,7 +111,7 @@ var DisplayObject = /** @class */ (function () {
         return abs(this.height * this.scaleY);
     };
     ;
-    DisplayObject.updateList = ['visible', 'left', 'top', 'originX', 'originY', 'scaleX', 'scaleY', 'angle', 'debug'];
+    DisplayObject.updateList = ['visible', 'left', 'top', 'originX', 'originY', 'scaleX', 'scaleY', 'angle', 'opacity', 'debug'];
     return DisplayObject;
 }());
 export default DisplayObject;

@@ -47,6 +47,9 @@ var Polygon = /** @class */ (function (_super) {
         if (renderDevtoolsDebug === void 0) { renderDevtoolsDebug = false; }
         var dstX = this.scaleX < 0 ? -this.width : 0;
         var dstY = this.scaleY < 0 ? -this.height : 0;
+        if (this.opacity !== 1) {
+            ctx.globalAlpha = this.opacity || 1;
+        }
         if (this.angle) {
             ctx.translate(this.left, this.top);
             ctx.rotate(degreesToRadians(this.angle));

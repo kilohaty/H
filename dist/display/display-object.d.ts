@@ -29,6 +29,7 @@ export default abstract class DisplayObject {
     scaleX: number;
     scaleY: number;
     angle: number;
+    opacity: number;
     debug: boolean;
     static updateList: Array<string>;
     protected constructor(options: IDisplayObjectOptions);
