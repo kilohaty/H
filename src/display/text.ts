@@ -58,6 +58,9 @@ export default class Text extends DisplayObject {
     let dstY = this.scaleY < 0 ? -this.height : 0;
 
     ctx.save();
+    if (this.opacity !== 1) {
+      ctx.globalAlpha = this.opacity || 1;
+    }
     if (this.angle) {
       ctx.translate(this.left, this.top);
       ctx.rotate(degreesToRadians(this.angle));

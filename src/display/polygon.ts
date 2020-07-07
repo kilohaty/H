@@ -63,6 +63,9 @@ export default class Polygon extends DisplayObject {
     let dstX = this.scaleX < 0 ? -this.width : 0;
     let dstY = this.scaleY < 0 ? -this.height : 0;
 
+    if (this.opacity !== 1) {
+      ctx.globalAlpha = this.opacity || 1;
+    }
     if (this.angle) {
       ctx.translate(this.left, this.top);
       ctx.rotate(degreesToRadians(this.angle));

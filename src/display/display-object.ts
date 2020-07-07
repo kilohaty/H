@@ -38,10 +38,11 @@ export default abstract class DisplayObject {
   public scaleX: number = 1;
   public scaleY: number = 1;
   public angle: number = 0;
+  public opacity: number = 1;
   public debug: boolean = false;
 
   public static updateList: Array<string> =
-    ['visible', 'left', 'top', 'originX', 'originY', 'scaleX', 'scaleY', 'angle', 'debug'];
+    ['visible', 'left', 'top', 'originX', 'originY', 'scaleX', 'scaleY', 'angle', 'opacity', 'debug'];
 
   protected constructor(options: IDisplayObjectOptions) {
     this.id = UID.gen();
