@@ -17,9 +17,7 @@ declare class Stage {
         throttleDelay: number;
     });
     resize(width: number, height: number): void;
-    private initDevtoolsBus;
     private loopAnim;
-    private initHook;
     private renderObjects;
     private initEvents;
     private removeEvents;
