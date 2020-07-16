@@ -1,7 +1,5 @@
 import UID from '../utils/uid';
 import IPoint from '../utils/point';
-import devtools from '../devtools';
-import config from '../config';
 
 const {abs} = Math;
 
@@ -63,16 +61,6 @@ export default abstract class DisplayObject {
           }
         }
 
-        // devtools
-        if (key !== 'updateFlag') {
-          if (devtools.isEnable()) {
-            devtools.bus.emit(devtools.EVENT_TP.UPDATE_OBJECT, {
-              layerIndex: this.layerIndex,
-              object: JSON.stringify(this)
-            });
-          }
-        }
-
         return true;
       }
     });
@@ -124,12 +112,6 @@ export default abstract class DisplayObject {
   }
 
   protected renderDevtoolsDebug(ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number): void {
-    if (devtools.isEnable()) {
-      if (this.id === devtools.getSelectedObjectId()) {
-        ctx.fillStyle = config.devtools.highlightColor;
-        ctx.fillRect(x, y, width, height);
-      }
-    }
   }
 
   public getOriginLeft(): number {
