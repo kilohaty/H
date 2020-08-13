@@ -4,14 +4,11 @@ import {loadImage, isPointInRect, degreesToRadians} from '../utils/misc';
 import IPoint from "../utils/point";
 
 interface IStatusFrame {
-  [index: number]: { x: number, y: number };
-
-  length: number;
+  [index: number]: { x: number, y: number, w: number, h: number, cx: number, cy: number };
+  l: number; // length
   src?: string;
-  frameWidth: number;
-  frameHeight: number;
-  frameDuration: number;
-  iterationCount?: number;
+  d: number; // frameDuration
+  i?: number; // iterationCount
 }
 
 interface IFrames {
@@ -55,8 +52,8 @@ export default class Sprite extends DisplayObject {
       try {
         this.bitmapSource = await loadImage(this.src);
         const frame = this.frames[this.status];
-        this.width = frame.frameWidth;
-        this.height = frame.frameHeight;
+        this.width = frame[0].w;
+        this.height = frame[0].h;
         this.reset();
         this.updateFlag = true;
       } catch (err) {
@@ -68,8 +65,8 @@ export default class Sprite extends DisplayObject {
     if (key === 'status') {
       const frame = this.frames[this.status];
       if (!frame.src || frame.src === this.src) {
-        this.width = frame.frameWidth;
-        this.height = frame.frameHeight;
+        this.width = frame[0].w;
+        this.height = frame[0].h;
         this.reset();
       } else {
         this.src = frame.src;
@@ -124,7 +121,7 @@ export default class Sprite extends DisplayObject {
 
   private isAnimationEnd() {
     const frame = this.frames[this.status];
-    return this.paused || frame.iterationCount && this.iteratedCount >= frame.iterationCount;
+    return this.paused || frame.i && this.iteratedCount >= frame.i;
   }
 
   protected _render(ctx: CanvasRenderingContext2D): void {
@@ -136,9 +133,12 @@ export default class Sprite extends DisplayObject {
     const now = Date.now();
     const frame = this.frames[this.status];
     if (this.isAnimationEnd()) {
-      this.frameIndex = frame.length - 1
+      this.frameIndex = frame.l - 1
     }
     const frameData = frame[this.frameIndex];
+    this.width = frameData.w;
+    this.height = frameData.h;
+
     let dstX = this.scaleX < 0 ? -this.width : 0;
     let dstY = this.scaleY < 0 ? -this.height : 0;
 
@@ -151,7 +151,7 @@ export default class Sprite extends DisplayObject {
       ctx.rotate(degreesToRadians(this.angle));
       ctx.translate(this.getOriginLeft() - this.left, this.getOriginTop() - this.top);
     } else {
-      ctx.translate(this.getOriginLeft(), this.getOriginTop());
+      ctx.translate(this.getOriginLeft() - frameData.cx, this.getOriginTop() - frameData.cy);
     }
     ctx.scale(this.scaleX, this.scaleY);
     ctx.drawImage(
@@ -171,12 +171,12 @@ export default class Sprite extends DisplayObject {
     if (!this.lastFrameTime) {
       this.lastFrameTime = now;
       this.frameIndex++;
-    } else if (now - this.lastFrameTime >= frame.frameDuration / this.playbackRate) {
+    } else if (now - this.lastFrameTime >= frame.d / this.playbackRate) {
       this.lastFrameTime = now;
       this.frameIndex++;
     }
 
-    if (this.frameIndex >= frame.length) {
+    if (this.frameIndex >= frame.l) {
       this.frameIndex = 0;
       this.iteratedCount++;
     }
