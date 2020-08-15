@@ -118,12 +118,16 @@ var Sprite = /** @class */ (function (_super) {
             ctx.globalAlpha = this.opacity || 1;
         }
         if (this.angle) {
+            var cx = this.scaleX * (frameData.cx - frameData.w / 2);
+            var cy = this.scaleY * (frameData.cy - frameData.h / 2);
             ctx.translate(this.left, this.top);
             ctx.rotate(degreesToRadians(this.angle));
-            ctx.translate(this.getOriginLeft() - this.left, this.getOriginTop() - this.top);
+            ctx.translate(this.getOriginLeft() - this.left - cx, this.getOriginTop() - this.top - cy);
         }
         else {
-            ctx.translate(this.getOriginLeft() - frameData.cx, this.getOriginTop() - frameData.cy);
+            var cx = this.scaleX * (frameData.cx - frameData.w / 2);
+            var cy = this.scaleY * (frameData.cy - frameData.h / 2);
+            ctx.translate(this.getOriginLeft() - cx, this.getOriginTop() - cy);
         }
         ctx.scale(this.scaleX, this.scaleY);
         ctx.drawImage(this.bitmapSource, frameData.x, frameData.y, this.width, this.height, dstX, dstY, this.width, this.height);
