@@ -147,11 +147,15 @@ export default class Sprite extends DisplayObject {
       ctx.globalAlpha = this.opacity || 1;
     }
     if (this.angle) {
+      const cx = this.scaleX  * (frameData.cx - frameData.w / 2)
+      const cy = this.scaleY  * (frameData.cy - frameData.h / 2)
       ctx.translate(this.left, this.top);
       ctx.rotate(degreesToRadians(this.angle));
-      ctx.translate(this.getOriginLeft() - this.left, this.getOriginTop() - this.top);
+      ctx.translate(this.getOriginLeft() - this.left - cx, this.getOriginTop() - this.top - cy);
     } else {
-      ctx.translate(this.getOriginLeft() - frameData.cx, this.getOriginTop() - frameData.cy);
+      const cx = this.scaleX  * (frameData.cx - frameData.w / 2)
+      const cy = this.scaleY  * (frameData.cy - frameData.h / 2)
+      ctx.translate(this.getOriginLeft() - cx, this.getOriginTop() - cy);
     }
     ctx.scale(this.scaleX, this.scaleY);
     ctx.drawImage(
