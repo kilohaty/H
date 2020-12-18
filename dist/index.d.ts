@@ -31,11 +31,5 @@ declare const H: {
             contextMenu: string;
         };
     };
-    config: {
-        devtools: {
-            enable: boolean;
-            highlightColor: string;
-        };
-    };
 };
 export default H;

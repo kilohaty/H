@@ -1,6 +1,4 @@
 import UID from '../utils/uid';
-import devtools from '../devtools';
-import config from '../config';
 var abs = Math.abs;
 var DisplayObject = /** @class */ (function () {
     function DisplayObject(options) {
@@ -35,15 +33,6 @@ var DisplayObject = /** @class */ (function () {
                     Reflect.set(target, key, value, receiver);
                     if (receiver.constructor.updateList.indexOf(key) !== -1) {
                         _this.update(key);
-                    }
-                }
-                // devtools
-                if (key !== 'updateFlag') {
-                    if (devtools.isEnable()) {
-                        devtools.bus.emit(devtools.EVENT_TP.UPDATE_OBJECT, {
-                            layerIndex: _this.layerIndex,
-                            object: JSON.stringify(_this)
-                        });
                     }
                 }
                 return true;
@@ -86,12 +75,6 @@ var DisplayObject = /** @class */ (function () {
         }
     };
     DisplayObject.prototype.renderDevtoolsDebug = function (ctx, x, y, width, height) {
-        if (devtools.isEnable()) {
-            if (this.id === devtools.getSelectedObjectId()) {
-                ctx.fillStyle = config.devtools.highlightColor;
-                ctx.fillRect(x, y, width, height);
-            }
-        }
     };
     DisplayObject.prototype.getOriginLeft = function () {
         return this.originX === 'center' ? this.left - this.getWidth() / 2

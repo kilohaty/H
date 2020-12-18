@@ -30,8 +30,8 @@ var Sprite = /** @class */ (function (_super) {
                     case 2:
                         _a.bitmapSource = _b.sent();
                         frame = this.frames[this.status];
-                        this.width = frame.frameWidth;
-                        this.height = frame.frameHeight;
+                        this.width = frame[0].w;
+                        this.height = frame[0].h;
                         this.reset();
                         this.updateFlag = true;
                         return [3 /*break*/, 4];
@@ -44,8 +44,8 @@ var Sprite = /** @class */ (function (_super) {
                         if (key === 'status') {
                             frame = this.frames[this.status];
                             if (!frame.src || frame.src === this.src) {
-                                this.width = frame.frameWidth;
-                                this.height = frame.frameHeight;
+                                this.width = frame[0].w;
+                                this.height = frame[0].h;
                                 this.reset();
                             }
                             else {
@@ -96,7 +96,7 @@ var Sprite = /** @class */ (function (_super) {
     };
     Sprite.prototype.isAnimationEnd = function () {
         var frame = this.frames[this.status];
-        return this.paused || frame.iterationCount && this.iteratedCount >= frame.iterationCount;
+        return this.paused || frame.i && this.iteratedCount >= frame.i;
     };
     Sprite.prototype._render = function (ctx) {
         if (!this.bitmapSource) {
@@ -106,9 +106,11 @@ var Sprite = /** @class */ (function (_super) {
         var now = Date.now();
         var frame = this.frames[this.status];
         if (this.isAnimationEnd()) {
-            this.frameIndex = frame.length - 1;
+            this.frameIndex = frame.l - 1;
         }
         var frameData = frame[this.frameIndex];
+        this.width = frameData.w;
+        this.height = frameData.h;
         var dstX = this.scaleX < 0 ? -this.width : 0;
         var dstY = this.scaleY < 0 ? -this.height : 0;
         ctx.save();
@@ -116,12 +118,16 @@ var Sprite = /** @class */ (function (_super) {
             ctx.globalAlpha = this.opacity || 1;
         }
         if (this.angle) {
+            var cx = this.scaleX * (frameData.cx - frameData.w / 2);
+            var cy = this.scaleY * (frameData.cy - frameData.h / 2);
             ctx.translate(this.left, this.top);
             ctx.rotate(degreesToRadians(this.angle));
-            ctx.translate(this.getOriginLeft() - this.left, this.getOriginTop() - this.top);
+            ctx.translate(this.getOriginLeft() - this.left - cx, this.getOriginTop() - this.top - cy);
         }
         else {
-            ctx.translate(this.getOriginLeft(), this.getOriginTop());
+            var cx = this.scaleX * (frameData.cx - frameData.w / 2);
+            var cy = this.scaleY * (frameData.cy - frameData.h / 2);
+            ctx.translate(this.getOriginLeft() - cx, this.getOriginTop() - cy);
         }
         ctx.scale(this.scaleX, this.scaleY);
         ctx.drawImage(this.bitmapSource, frameData.x, frameData.y, this.width, this.height, dstX, dstY, this.width, this.height);
@@ -132,11 +138,11 @@ var Sprite = /** @class */ (function (_super) {
             this.lastFrameTime = now;
             this.frameIndex++;
         }
-        else if (now - this.lastFrameTime >= frame.frameDuration / this.playbackRate) {
+        else if (now - this.lastFrameTime >= frame.d / this.playbackRate) {
             this.lastFrameTime = now;
             this.frameIndex++;
         }
-        if (this.frameIndex >= frame.length) {
+        if (this.frameIndex >= frame.l) {
             this.frameIndex = 0;
             this.iteratedCount++;
         }

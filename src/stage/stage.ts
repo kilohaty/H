@@ -1,6 +1,4 @@
 import Layer from './layer';
-import devtools from '../devtools';
-import config from '../config';
 import {throttle} from '../utils/misc';
 
 class Stage {
@@ -38,7 +36,6 @@ class Stage {
     }
 
     this.initEvents();
-    this.initDevtoolsBus();
     this.animationFrameId = requestAnimationFrame(this.loopAnim.bind(this));
   }
 
@@ -51,34 +48,9 @@ class Stage {
     this.forceRender = true;
   }
 
-  private initDevtoolsBus(): void {
-    devtools.bus.on('update.stage', () => {
-      if (devtools.isEnable()) {
-        devtools.bus.emit(devtools.EVENT_TP.UPDATE_STAGE, JSON.stringify(this));
-      }
-    });
-  }
-
   private loopAnim(): void {
     this.renderObjects();
-    this.initHook();
     this.animationFrameId = requestAnimationFrame(this.loopAnim.bind(this));
-  }
-
-  private initHook() {
-    if (!config.devtools.enable) {
-      return
-    }
-
-    if (this.hookInit) {
-      return;
-    }
-
-    if (devtools.isEnable()) {
-      devtools.setStage(this);
-      devtools.bus.emit(devtools.EVENT_TP.UPDATE_STAGE, JSON.stringify(this));
-      this.hookInit = true;
-    }
   }
 
   private renderObjects(): void {

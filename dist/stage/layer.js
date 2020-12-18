@@ -1,7 +1,6 @@
 import * as tslib_1 from "tslib";
 import Bus from '../utils/bus';
 import EventTypes from './event-types';
-import devtools from '../devtools';
 function createCanvas(width, height, zIndex) {
     if (width === void 0) { width = 300; }
     if (height === void 0) { height = 150; }
@@ -50,7 +49,6 @@ var Layer = /** @class */ (function () {
         var _a;
         objects.forEach(function (object) { return object.layerIndex = _this.layerIndex; });
         (_a = this.objects).push.apply(_a, tslib_1.__spread(objects));
-        devtools.bus.emit('update.stage', null);
         return this;
     };
     Layer.prototype.insert = function (insertIndex) {
@@ -62,7 +60,6 @@ var Layer = /** @class */ (function () {
         var _a;
         objects.forEach(function (object) { return object.layerIndex = _this.layerIndex; });
         (_a = this.objects).splice.apply(_a, tslib_1.__spread([insertIndex, 0], objects));
-        devtools.bus.emit('update.stage', null);
         return this;
     };
     Layer.prototype.removeById = function (objectId) {
@@ -75,13 +72,11 @@ var Layer = /** @class */ (function () {
             }
         }
         this.forceRender = true;
-        devtools.bus.emit('update.stage', null);
         return removed;
     };
     Layer.prototype.clear = function () {
         this.objects = [];
         this.forceRender = true;
-        devtools.bus.emit('update.stage', null);
     };
     Layer.prototype.shouldRender = function () {
         // 优化：当 visible 为 false，其他属性变更时，可不做更新

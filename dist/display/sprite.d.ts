@@ -5,13 +5,15 @@ interface IStatusFrame {
     [index: number]: {
         x: number;
         y: number;
+        w: number;
+        h: number;
+        cx: number;
+        cy: number;
     };
-    length: number;
+    l: number;
     src?: string;
-    frameWidth: number;
-    frameHeight: number;
-    frameDuration: number;
-    iterationCount?: number;
+    d: number;
+    i?: number;
 }
 interface IFrames {
     [propName: string]: IStatusFrame;
