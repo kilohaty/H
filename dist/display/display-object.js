@@ -20,7 +20,7 @@ var DisplayObject = /** @class */ (function () {
         this.angle = 0;
         this.opacity = 1;
         this.debug = false;
-        this.id = UID.gen();
+        this.id = options.id || UID.gen();
         this.proxy = new Proxy(this, {
             get: function (target, key, receiver) {
                 if (key === 'toJSON') {

@@ -1,5 +1,6 @@
 import IPoint from '../utils/point';
 export interface IDisplayObjectOptions {
+    id?: number;
     layerIndex?: number;
     visible?: boolean;
     left?: number;
