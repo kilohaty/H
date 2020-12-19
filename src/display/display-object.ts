@@ -44,7 +44,7 @@ export default abstract class DisplayObject {
     ['visible', 'left', 'top', 'originX', 'originY', 'scaleX', 'scaleY', 'angle', 'opacity', 'debug'];
 
   protected constructor(options: IDisplayObjectOptions) {
-    this.id = options.id || UID.gen();
+    this.id = options && options.id || UID.gen();
     this.proxy = new Proxy(this, {
       get: (target, key, receiver) => {
         if (key === 'toJSON') {
@@ -77,7 +77,7 @@ export default abstract class DisplayObject {
   public set(options: any) {
     if (typeof options === 'object') {
       for (let key in options) {
-        if (options.hasOwnProperty(key)) {
+        if (options.hasOwnProperty(key) && key !== 'id') {
           this[key] = options[key];
         }
       }
