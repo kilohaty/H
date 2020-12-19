@@ -18,7 +18,7 @@ var DisplayObject = /** @class */ (function () {
         this.angle = 0;
         this.opacity = 1;
         this.debug = false;
-        this.id = options.id || UID.gen();
+        this.id = options && options.id || UID.gen();
         this.proxy = new Proxy(this, {
             get: function (target, key, receiver) {
                 if (key === 'toJSON') {
@@ -47,7 +47,7 @@ var DisplayObject = /** @class */ (function () {
     DisplayObject.prototype.set = function (options) {
         if (typeof options === 'object') {
             for (var key in options) {
-                if (options.hasOwnProperty(key)) {
+                if (options.hasOwnProperty(key) && key !== 'id') {
                     this[key] = options[key];
                 }
             }
