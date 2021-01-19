@@ -84,8 +84,12 @@ export default abstract class DisplayObject {
     }
   }
 
-  public needUpdate(): boolean {
+  public getUpdateFlag(): boolean {
     return this.updateFlag;
+  }
+
+  public needUpdate(): boolean {
+    return this.getUpdateFlag();
   }
 
   public render(ctx: CanvasRenderingContext2D): void {
