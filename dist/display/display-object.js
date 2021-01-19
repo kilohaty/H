@@ -53,8 +53,11 @@ var DisplayObject = /** @class */ (function () {
             }
         }
     };
-    DisplayObject.prototype.needUpdate = function () {
+    DisplayObject.prototype.getUpdateFlag = function () {
         return this.updateFlag;
+    };
+    DisplayObject.prototype.needUpdate = function () {
+        return this.getUpdateFlag();
     };
     DisplayObject.prototype.render = function (ctx) {
         if (this.visible) {

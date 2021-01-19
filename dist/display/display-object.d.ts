@@ -36,6 +36,7 @@ export default abstract class DisplayObject {
     protected constructor(options: IDisplayObjectOptions);
     protected update(key: string): void;
     set(options: any): void;
+    getUpdateFlag(): boolean;
     needUpdate(): boolean;
     render(ctx: CanvasRenderingContext2D): void;
     protected abstract _render(ctx: CanvasRenderingContext2D): void;

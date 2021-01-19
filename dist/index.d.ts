@@ -4,6 +4,7 @@ import Bitmap from './display/bitmap';
 import Text from './display/text';
 import Polygon from './display/polygon';
 import Sprite from './display/sprite';
+import Group from './display/group';
 declare const H: {
     Stage: typeof Stage;
     DisplayObject: typeof DisplayObject;
@@ -11,6 +12,7 @@ declare const H: {
     Text: typeof Text;
     Polygon: typeof Polygon;
     Sprite: typeof Sprite;
+    Group: typeof Group;
     EventTypes: {
         stage: {
             mouseEnter: string;
