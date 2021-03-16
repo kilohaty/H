@@ -14,6 +14,7 @@ export interface ITextOptions extends IDisplayObjectOptions {
   fontWeight?: number;
   fontFamily?: number;
   color?: string;
+  letterSpacing?: number;
   shadowColor?: string;
   shadowOffsetX?: number;
   shadowOffsetY?: number;
@@ -31,6 +32,7 @@ export default class Text extends DisplayObject {
   public fontWeight: string = 'normal';
   public fontFamily: string = DEFAULT_FONT_FAMILY;
   public color: string = '#000000';
+  public letterSpacing: number = 0;
   public shadowColor: string = '';
   public shadowOffsetX: number = 0;
   public shadowOffsetY: number = 0;
@@ -38,7 +40,8 @@ export default class Text extends DisplayObject {
   public gradient: ITextGradient = null;
 
   public static updateList: Array<string> = [...DisplayObject.updateList,
-    'text', 'fontSize', 'fontWeight', 'fontFamily', 'color', 'shadowColor', 'shadowOffsetX', 'shadowOffsetY', 'shadowBlur', 'gradient'];
+    'text', 'fontSize', 'fontWeight', 'fontFamily', 'color',
+    'shadowColor', 'shadowOffsetX', 'shadowOffsetY', 'shadowBlur', 'gradient', 'letterSpacing'];
 
   public constructor(options: ITextOptions) {
     super(null);
@@ -64,7 +67,11 @@ export default class Text extends DisplayObject {
       font-weight: ${this.fontWeight};
     `;
     const dimensions = TextHelper.measureText(this.text, cssText);
-    this.width = dimensions.width;
+    if (this.letterSpacing && this.text.length > 1) {
+      this.width = dimensions.width + (this.text.length - 1) * this.letterSpacing;
+    } else {
+      this.width = dimensions.width;
+    }
     this.height = dimensions.height;
   }
 
@@ -103,7 +110,22 @@ export default class Text extends DisplayObject {
     }
     ctx.fillStyle = this.gradient ? gradient : this.color;
     ctx.font = `${this.fontWeight} ${this.fontSize}px ${this.fontFamily}`;
-    ctx.fillText(this.text, dstX, dstY);
+
+    if (this.letterSpacing && this.text.length > 1) {
+      let indent = 0;
+      const cssText = `
+        font-family: ${this.fontFamily};
+        font-size: ${this.fontSize}px;
+        font-weight: ${this.fontWeight};
+      `;
+      this.text.split('').forEach((letter: string) => {
+        ctx.fillText(letter, dstX + indent, dstY);
+        const dimensions = TextHelper.measureText(letter, cssText);
+        indent += dimensions.width + this.letterSpacing;
+      })
+    } else {
+      ctx.fillText(this.text, dstX, dstY);
+    }
     this.renderDebug(ctx, dstX, dstY, this.width, this.height);
     this.renderDevtoolsDebug(ctx, dstX, dstY, this.width, this.height);
     ctx.restore();
