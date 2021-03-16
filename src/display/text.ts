@@ -4,12 +4,21 @@ import IPoint from '../utils/point';
 import {degreesToRadians, isPointInRect} from '../utils/misc';
 import TextHelper from '../utils/text-helper';
 
+export interface ITextGradient {
+  colorStops: Array<{ percent: number, color: string }>
+}
+
 export interface ITextOptions extends IDisplayObjectOptions {
   text?: string;
   fontSize?: number;
   fontWeight?: number;
   fontFamily?: number;
   color?: string;
+  shadowColor?: string;
+  shadowOffsetX?: number;
+  shadowOffsetY?: number;
+  shadowBlur?: number;
+  gradient?: ITextGradient;
 }
 
 const DEFAULT_FONT_FAMILY = '"PingFang SC", Verdana, "Helvetica Neue", "Microsoft Yahei", "Hiragino Sans GB", "Microsoft Sans Serif", "WenQuanYi Micro Hei", sans-serif';
@@ -22,8 +31,14 @@ export default class Text extends DisplayObject {
   public fontWeight: string = 'normal';
   public fontFamily: string = DEFAULT_FONT_FAMILY;
   public color: string = '#000000';
+  public shadowColor: string = '';
+  public shadowOffsetX: number = 0;
+  public shadowOffsetY: number = 0;
+  public shadowBlur: number = 0;
+  public gradient: ITextGradient = null;
 
-  public static updateList: Array<string> = [...DisplayObject.updateList, 'text', 'fontSize', 'fontWeight', 'fontFamily', 'color'];
+  public static updateList: Array<string> = [...DisplayObject.updateList,
+    'text', 'fontSize', 'fontWeight', 'fontFamily', 'color', 'shadowColor', 'shadowOffsetX', 'shadowOffsetY', 'shadowBlur', 'gradient'];
 
   public constructor(options: ITextOptions) {
     super(null);
@@ -71,7 +86,22 @@ export default class Text extends DisplayObject {
     ctx.scale(this.scaleX, this.scaleY);
     ctx.textAlign = 'left';
     ctx.textBaseline = 'top';
-    ctx.fillStyle = this.color;
+
+    let gradient
+    if (this.gradient) {
+      gradient = ctx.createLinearGradient(0,0, this.width,this.height);
+      this.gradient.colorStops.forEach(({ percent, color}) => {
+        gradient.addColorStop(percent, color);
+      })
+    }
+
+    if (this.shadowColor) {
+      ctx.shadowColor = this.shadowColor;
+      ctx.shadowOffsetX = this.shadowOffsetX;
+      ctx.shadowOffsetY = this.shadowOffsetY;
+      ctx.shadowBlur = this.shadowBlur;
+    }
+    ctx.fillStyle = this.gradient ? gradient : this.color;
     ctx.font = `${this.fontWeight} ${this.fontSize}px ${this.fontFamily}`;
     ctx.fillText(this.text, dstX, dstY);
     this.renderDebug(ctx, dstX, dstY, this.width, this.height);
