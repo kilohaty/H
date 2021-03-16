@@ -1,6 +1,6 @@
 {
   "name": "@kilohaty/h",
-  "version": "0.7.4",
+  "version": "0.7.5",
   "description": "A lightweight canvas library which providing 2d draw",
   "main": "dist/H.min.js",
   "types": "dist/index.d.ts",

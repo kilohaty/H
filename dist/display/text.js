@@ -12,6 +12,11 @@ var Text = /** @class */ (function (_super) {
         _this.fontWeight = 'normal';
         _this.fontFamily = DEFAULT_FONT_FAMILY;
         _this.color = '#000000';
+        _this.shadowColor = '';
+        _this.shadowOffsetX = 0;
+        _this.shadowOffsetY = 0;
+        _this.shadowBlur = 0;
+        _this.gradient = null;
         _this.set(options);
         return _this;
     }
@@ -49,7 +54,21 @@ var Text = /** @class */ (function (_super) {
         ctx.scale(this.scaleX, this.scaleY);
         ctx.textAlign = 'left';
         ctx.textBaseline = 'top';
-        ctx.fillStyle = this.color;
+        var gradient;
+        if (this.gradient) {
+            gradient = ctx.createLinearGradient(0, 0, this.width, this.height);
+            this.gradient.colorStops.forEach(function (_a) {
+                var percent = _a.percent, color = _a.color;
+                gradient.addColorStop(percent, color);
+            });
+        }
+        if (this.shadowColor) {
+            ctx.shadowColor = this.shadowColor;
+            ctx.shadowOffsetX = this.shadowOffsetX;
+            ctx.shadowOffsetY = this.shadowOffsetY;
+            ctx.shadowBlur = this.shadowBlur;
+        }
+        ctx.fillStyle = this.gradient ? gradient : this.color;
         ctx.font = this.fontWeight + " " + this.fontSize + "px " + this.fontFamily;
         ctx.fillText(this.text, dstX, dstY);
         this.renderDebug(ctx, dstX, dstY, this.width, this.height);
@@ -68,7 +87,7 @@ var Text = /** @class */ (function (_super) {
             angle: this.angle
         }, point);
     };
-    Text.updateList = tslib_1.__spread(DisplayObject.updateList, ['text', 'fontSize', 'fontWeight', 'fontFamily', 'color']);
+    Text.updateList = tslib_1.__spread(DisplayObject.updateList, ['text', 'fontSize', 'fontWeight', 'fontFamily', 'color', 'shadowColor', 'shadowOffsetX', 'shadowOffsetY', 'shadowBlur', 'gradient']);
     return Text;
 }(DisplayObject));
 export default Text;
