@@ -12,6 +12,7 @@ var Text = /** @class */ (function (_super) {
         _this.fontWeight = 'normal';
         _this.fontFamily = DEFAULT_FONT_FAMILY;
         _this.color = '#000000';
+        _this.letterSpacing = 0;
         _this.shadowColor = '';
         _this.shadowOffsetX = 0;
         _this.shadowOffsetY = 0;
@@ -33,10 +34,16 @@ var Text = /** @class */ (function (_super) {
         }
         var cssText = "\n      font-family: " + this.fontFamily + ";\n      font-size: " + this.fontSize + "px;\n      font-weight: " + this.fontWeight + ";\n    ";
         var dimensions = TextHelper.measureText(this.text, cssText);
-        this.width = dimensions.width;
+        if (this.letterSpacing && this.text.length > 1) {
+            this.width = dimensions.width + (this.text.length - 1) * this.letterSpacing;
+        }
+        else {
+            this.width = dimensions.width;
+        }
         this.height = dimensions.height;
     };
     Text.prototype._render = function (ctx) {
+        var _this = this;
         var dstX = this.scaleX < 0 ? -this.width : 0;
         var dstY = this.scaleY < 0 ? -this.height : 0;
         ctx.save();
@@ -70,7 +77,18 @@ var Text = /** @class */ (function (_super) {
         }
         ctx.fillStyle = this.gradient ? gradient : this.color;
         ctx.font = this.fontWeight + " " + this.fontSize + "px " + this.fontFamily;
-        ctx.fillText(this.text, dstX, dstY);
+        if (this.letterSpacing && this.text.length > 1) {
+            var indent_1 = 0;
+            var cssText_1 = "\n        font-family: " + this.fontFamily + ";\n        font-size: " + this.fontSize + "px;\n        font-weight: " + this.fontWeight + ";\n      ";
+            this.text.split('').forEach(function (letter) {
+                ctx.fillText(letter, dstX + indent_1, dstY);
+                var dimensions = TextHelper.measureText(letter, cssText_1);
+                indent_1 += dimensions.width + _this.letterSpacing;
+            });
+        }
+        else {
+            ctx.fillText(this.text, dstX, dstY);
+        }
         this.renderDebug(ctx, dstX, dstY, this.width, this.height);
         this.renderDevtoolsDebug(ctx, dstX, dstY, this.width, this.height);
         ctx.restore();
@@ -87,7 +105,8 @@ var Text = /** @class */ (function (_super) {
             angle: this.angle
         }, point);
     };
-    Text.updateList = tslib_1.__spread(DisplayObject.updateList, ['text', 'fontSize', 'fontWeight', 'fontFamily', 'color', 'shadowColor', 'shadowOffsetX', 'shadowOffsetY', 'shadowBlur', 'gradient']);
+    Text.updateList = tslib_1.__spread(DisplayObject.updateList, ['text', 'fontSize', 'fontWeight', 'fontFamily', 'color',
+        'shadowColor', 'shadowOffsetX', 'shadowOffsetY', 'shadowBlur', 'gradient', 'letterSpacing']);
     return Text;
 }(DisplayObject));
 export default Text;

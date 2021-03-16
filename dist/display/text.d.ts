@@ -13,6 +13,7 @@ export interface ITextOptions extends IDisplayObjectOptions {
     fontWeight?: number;
     fontFamily?: number;
     color?: string;
+    letterSpacing?: number;
     shadowColor?: string;
     shadowOffsetX?: number;
     shadowOffsetY?: number;
@@ -26,6 +27,7 @@ export default class Text extends DisplayObject {
     fontWeight: string;
     fontFamily: string;
     color: string;
+    letterSpacing: number;
     shadowColor: string;
     shadowOffsetX: number;
     shadowOffsetY: number;
