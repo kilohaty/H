@@ -207,12 +207,16 @@ export default class Sprite extends DisplayObject {
   }
 
   protected _isPointOnObject(point: IPoint): boolean {
+    const frame = this.frames[this.status];
+    const frameData = frame[this.frameIndex];
+    const fixCx = this.getWidth() / 2 - frameData.cx;
+    const fixCy = this.getHeight() / 2 - frameData.cy;
     return isPointInRect(
       {
         rotateOriginLeft: this.left,
         rotateOriginTop: this.top,
-        left: this.getOriginLeft(),
-        top: this.getOriginTop(),
+        left: this.getOriginLeft() + fixCx,
+        top: this.getOriginTop() + fixCy,
         width: this.getWidth(),
         height: this.getHeight(),
         angle: this.angle
