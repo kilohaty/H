@@ -163,11 +163,15 @@ var Sprite = /** @class */ (function (_super) {
         this.updateFlag = true;
     };
     Sprite.prototype._isPointOnObject = function (point) {
+        var frame = this.frames[this.status];
+        var frameData = frame[this.frameIndex];
+        var fixCx = this.getWidth() / 2 - frameData.cx;
+        var fixCy = this.getHeight() / 2 - frameData.cy;
         return isPointInRect({
             rotateOriginLeft: this.left,
             rotateOriginTop: this.top,
-            left: this.getOriginLeft(),
-            top: this.getOriginTop(),
+            left: this.getOriginLeft() + fixCx,
+            top: this.getOriginTop() + fixCy,
             width: this.getWidth(),
             height: this.getHeight(),
             angle: this.angle
