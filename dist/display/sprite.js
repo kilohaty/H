@@ -165,8 +165,8 @@ var Sprite = /** @class */ (function (_super) {
     Sprite.prototype._isPointOnObject = function (point) {
         var frame = this.frames[this.status];
         var frameData = frame[this.frameIndex];
-        var fixCx = this.getWidth() / 2 - frameData.cx;
-        var fixCy = this.getHeight() / 2 - frameData.cy;
+        var fixCx = (this.width / 2 - frameData.cx) * this.scaleX;
+        var fixCy = (this.height / 2 - frameData.cy) * this.scaleY;
         return isPointInRect({
             rotateOriginLeft: this.left,
             rotateOriginTop: this.top,
