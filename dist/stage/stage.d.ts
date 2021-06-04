@@ -11,6 +11,8 @@ declare class Stage {
     width: number;
     height: number;
     throttleDelay: number;
+    pageScale: number;
+    containerRect: ClientRect;
     constructor(options: {
         el: HTMLElement | string;
         width?: number;
@@ -18,11 +20,13 @@ declare class Stage {
         layerNumber?: number;
         throttleDelay: number;
     });
+    setPageScale(scale: number): void;
     resize(width: number, height: number): void;
     private loopAnim;
     private renderObjects;
     private initEvents;
     private initMobileEvents;
+    private calcMobileEventPosition;
     private removeEvents;
     private stopAnim;
     destroy(): void;
