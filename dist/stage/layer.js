@@ -168,11 +168,11 @@ var Layer = /** @class */ (function () {
         }
     };
     Layer.prototype.onLongTap = function (e) {
-        this.bus.emit(EventTypes.stage.langTap, { e: e });
-        if (this.bus.hasEvent(EventTypes.object.langTap)) {
+        this.bus.emit(EventTypes.stage.longTap, { e: e });
+        if (this.bus.hasEvent(EventTypes.object.longTap)) {
             var obj = this.getObjectByPoint({ x: e.offsetX, y: e.offsetY });
             if (obj) {
-                this.bus.emit(EventTypes.object.langTap, { e: e, object: obj });
+                this.bus.emit(EventTypes.object.longTap, { e: e, object: obj });
             }
         }
     };

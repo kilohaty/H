@@ -26,7 +26,7 @@ declare const H: {
             touchmove: string;
             touchend: string;
             touchcancel: string;
-            langTap: string;
+            longTap: string;
         };
         object: {
             mouseEnter: string;
@@ -36,12 +36,11 @@ declare const H: {
             click: string;
             mouseUp: string;
             contextMenu: string;
-            longTap: string;
             touchstart: string;
             touchmove: string;
             touchend: string;
             touchcancel: string;
-            langTap: string;
+            longTap: string;
         };
     };
 };
