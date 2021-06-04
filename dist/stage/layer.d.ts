@@ -34,6 +34,11 @@ export default class Layer {
     onMouseUp(e: any): void;
     onMouseLeave(e: any): void;
     onContextMenu(e: any): void;
+    onLongTap(e: any): void;
+    onTouchStart(e: any): void;
+    onTouchMove(e: any): void;
+    onTouchEnd(e: any): void;
+    onTouchCancel(e: any): void;
     private getObjectById;
     private getObjectByPoint;
 }

@@ -130,23 +130,29 @@ var Layer = /** @class */ (function () {
     };
     Layer.prototype.onMouseDown = function (e) {
         this.bus.emit(EventTypes.stage.mouseDown, { e: e });
-        var obj = this.getObjectByPoint({ x: e.offsetX, y: e.offsetY });
-        if (obj) {
-            this.bus.emit(EventTypes.object.mouseDown, { e: e, object: obj });
+        if (this.bus.hasEvent(EventTypes.object.mouseDown)) {
+            var obj = this.getObjectByPoint({ x: e.offsetX, y: e.offsetY });
+            if (obj) {
+                this.bus.emit(EventTypes.object.mouseDown, { e: e, object: obj });
+            }
         }
     };
     Layer.prototype.onClick = function (e) {
         this.bus.emit(EventTypes.stage.click, { e: e });
-        var obj = this.getObjectByPoint({ x: e.offsetX, y: e.offsetY });
-        if (obj) {
-            this.bus.emit(EventTypes.object.click, { e: e, object: obj });
+        if (this.bus.hasEvent(EventTypes.object.click)) {
+            var obj = this.getObjectByPoint({ x: e.offsetX, y: e.offsetY });
+            if (obj) {
+                this.bus.emit(EventTypes.object.click, { e: e, object: obj });
+            }
         }
     };
     Layer.prototype.onMouseUp = function (e) {
         this.bus.emit(EventTypes.stage.mouseUp, { e: e });
-        var obj = this.getObjectByPoint({ x: e.offsetX, y: e.offsetY });
-        if (obj) {
-            this.bus.emit(EventTypes.object.mouseUp, { e: e, object: obj });
+        if (this.bus.hasEvent(EventTypes.object.mouseUp)) {
+            var obj = this.getObjectByPoint({ x: e.offsetX, y: e.offsetY });
+            if (obj) {
+                this.bus.emit(EventTypes.object.mouseUp, { e: e, object: obj });
+            }
         }
     };
     Layer.prototype.onMouseLeave = function (e) {
@@ -154,9 +160,50 @@ var Layer = /** @class */ (function () {
     };
     Layer.prototype.onContextMenu = function (e) {
         this.bus.emit(EventTypes.stage.contextMenu, { e: e });
-        var obj = this.getObjectByPoint({ x: e.offsetX, y: e.offsetY });
-        if (obj) {
-            this.bus.emit(EventTypes.object.contextMenu, { e: e, object: obj });
+        if (this.bus.hasEvent(EventTypes.object.contextMenu)) {
+            var obj = this.getObjectByPoint({ x: e.offsetX, y: e.offsetY });
+            if (obj) {
+                this.bus.emit(EventTypes.object.contextMenu, { e: e, object: obj });
+            }
+        }
+    };
+    Layer.prototype.onLongTap = function (e) {
+        this.bus.emit(EventTypes.stage.langTap, { e: e });
+        if (this.bus.hasEvent(EventTypes.object.langTap)) {
+            var obj = this.getObjectByPoint({ x: e.offsetX, y: e.offsetY });
+            if (obj) {
+                this.bus.emit(EventTypes.object.langTap, { e: e, object: obj });
+            }
+        }
+    };
+    Layer.prototype.onTouchStart = function (e) {
+        this.bus.emit(EventTypes.stage.touchstart, { e: e });
+        if (this.bus.hasEvent(EventTypes.object.touchstart)) {
+            var obj = this.getObjectByPoint({ x: e.offsetX, y: e.offsetY });
+            if (obj) {
+                this.bus.emit(EventTypes.object.touchstart, { e: e, object: obj });
+            }
+        }
+    };
+    Layer.prototype.onTouchMove = function (e) {
+        this.bus.emit(EventTypes.stage.touchmove, { e: e });
+    };
+    Layer.prototype.onTouchEnd = function (e) {
+        this.bus.emit(EventTypes.stage.touchend, { e: e });
+        if (this.bus.hasEvent(EventTypes.object.touchend)) {
+            var obj = this.getObjectByPoint({ x: e.offsetX, y: e.offsetY });
+            if (obj) {
+                this.bus.emit(EventTypes.object.touchend, { e: e, object: obj });
+            }
+        }
+    };
+    Layer.prototype.onTouchCancel = function (e) {
+        this.bus.emit(EventTypes.stage.touchcancel, { e: e });
+        if (this.bus.hasEvent(EventTypes.object.touchcancel)) {
+            var obj = this.getObjectByPoint({ x: e.offsetX, y: e.offsetY });
+            if (obj) {
+                this.bus.emit(EventTypes.object.touchcancel, { e: e, object: obj });
+            }
         }
     };
     Layer.prototype.getObjectById = function (id) {

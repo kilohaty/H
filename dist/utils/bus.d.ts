@@ -6,5 +6,6 @@ declare class Bus {
     one(type: string, fn: Function): Bus;
     off(type: string): Bus;
     emit(type: string, data: any): Bus;
+    hasEvent(type: string): any;
 }
 export default Bus;

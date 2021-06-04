@@ -7,6 +7,11 @@ declare const _default: {
         click: string;
         mouseUp: string;
         contextMenu: string;
+        touchstart: string;
+        touchmove: string;
+        touchend: string;
+        touchcancel: string;
+        langTap: string;
     };
     object: {
         mouseEnter: string;
@@ -16,6 +21,12 @@ declare const _default: {
         click: string;
         mouseUp: string;
         contextMenu: string;
+        longTap: string;
+        touchstart: string;
+        touchmove: string;
+        touchend: string;
+        touchcancel: string;
+        langTap: string;
     };
 };
 export default _default;

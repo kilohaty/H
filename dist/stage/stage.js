@@ -1,10 +1,13 @@
 import Layer from './layer';
 import { throttle } from '../utils/misc';
+var LONG_PRESS_DISTANCE = 5;
 var Stage = /** @class */ (function () {
     function Stage(options) {
         this.forceRender = false;
         this.hookInit = false;
         this.animationFrameId = null;
+        this.touchStartTime = 0;
+        this.touchStartPoint = { x: 0, y: 0 };
         this.eventHandlers = {};
         this.layers = [];
         var el = options.el;
@@ -27,6 +30,7 @@ var Stage = /** @class */ (function () {
             this.layers.push(layer);
         }
         this.initEvents();
+        this.initMobileEvents();
         this.animationFrameId = requestAnimationFrame(this.loopAnim.bind(this));
     }
     Stage.prototype.resize = function (width, height) {
@@ -93,6 +97,59 @@ var Stage = /** @class */ (function () {
             var handler = doThrottle && _this.throttleDelay ? throttle(_this.throttleDelay, fn, false) : fn;
             _this.eventHandlers[name] = handler;
             _this.container.addEventListener(name, handler);
+        });
+    };
+    Stage.prototype.initMobileEvents = function () {
+        var _this = this;
+        // touchstart
+        this.container.addEventListener('touchstart', function (e) {
+            var touch = e.changedTouches[0];
+            _this.touchStartPoint = { x: touch.clientX, y: touch.clientY };
+            _this.touchStartTime = Date.now();
+            var fn = function (e) {
+                for (var i = _this.layers.length - 1; i >= 0; i--) {
+                    var layer = _this.layers[i];
+                    layer['onTouchStart'].call(layer, e);
+                }
+            };
+            fn({ offsetX: ~~touch.clientX, offsetY: ~~touch.clientY });
+        });
+        // touchmove
+        this.container.addEventListener('touchmove', function (e) {
+            var touch = e.changedTouches[0];
+            var fn = function (e) {
+                for (var i = _this.layers.length - 1; i >= 0; i--) {
+                    var layer = _this.layers[i];
+                    layer['onTouchMove'].call(layer, e);
+                }
+            };
+            var handler = _this.throttleDelay ? throttle(_this.throttleDelay, fn, false) : fn;
+            handler({ offsetX: ~~touch.clientX, offsetY: ~~touch.clientY });
+        });
+        // touchend
+        this.container.addEventListener('touchend', function (e) {
+            var touch = e.changedTouches[0];
+            var diffX = Math.abs(touch.clientX - _this.touchStartPoint.x);
+            var diffY = Math.abs(touch.clientY - _this.touchStartPoint.y);
+            var now = Date.now();
+            if (now - _this.touchStartTime > 500 && diffX < LONG_PRESS_DISTANCE && diffY < LONG_PRESS_DISTANCE) {
+                var fn = function (e) {
+                    for (var i = _this.layers.length - 1; i >= 0; i--) {
+                        var layer = _this.layers[i];
+                        layer['onLongTap'].call(layer, e);
+                    }
+                };
+                fn({ offsetX: ~~touch.clientX, offsetY: ~~touch.clientY });
+            }
+            else {
+                var fn = function (e) {
+                    for (var i = _this.layers.length - 1; i >= 0; i--) {
+                        var layer = _this.layers[i];
+                        layer['onTouchEnd'].call(layer, e);
+                    }
+                };
+                fn({ offsetX: ~~touch.clientX, offsetY: ~~touch.clientY });
+            }
         });
     };
     Stage.prototype.removeEvents = function () {

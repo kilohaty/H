@@ -61,6 +61,11 @@ class Bus {
 
     return this;
   }
+
+  hasEvent(type: string) {
+    const eventLists = this.list[type];
+    return eventLists && eventLists.length
+  }
 }
 
 export default Bus;

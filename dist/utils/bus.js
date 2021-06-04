@@ -45,6 +45,10 @@ var Bus = /** @class */ (function () {
         }
         return this;
     };
+    Bus.prototype.hasEvent = function (type) {
+        var eventLists = this.list[type];
+        return eventLists && eventLists.length;
+    };
     return Bus;
 }());
 export default Bus;

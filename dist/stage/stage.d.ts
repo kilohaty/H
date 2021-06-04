@@ -4,6 +4,8 @@ declare class Stage {
     private forceRender;
     private hookInit;
     private animationFrameId;
+    private touchStartTime;
+    private touchStartPoint;
     private eventHandlers;
     layers: Array<Layer>;
     width: number;
@@ -20,6 +22,7 @@ declare class Stage {
     private loopAnim;
     private renderObjects;
     private initEvents;
+    private initMobileEvents;
     private removeEvents;
     private stopAnim;
     destroy(): void;
