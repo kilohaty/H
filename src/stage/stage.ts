@@ -1,11 +1,15 @@
 import Layer from './layer';
 import {throttle} from '../utils/misc';
 
+const LONG_PRESS_DISTANCE = 5
+
 class Stage {
   private container: HTMLElement;
   private forceRender: boolean = false;
   private hookInit: boolean = false;
   private animationFrameId: number = null;
+  private touchStartTime = 0;
+  private touchStartPoint = { x: 0, y: 0 };
   private eventHandlers: { [propsName: string]: EventListener | EventListenerObject } = {};
   public layers: Array<Layer> = [];
   public width: number;
@@ -36,6 +40,7 @@ class Stage {
     }
 
     this.initEvents();
+    this.initMobileEvents();
     this.animationFrameId = requestAnimationFrame(this.loopAnim.bind(this));
   }
 
@@ -105,6 +110,60 @@ class Stage {
       this.eventHandlers[name] = handler;
       this.container.addEventListener(name, handler);
     })
+  }
+
+  private initMobileEvents() {
+    // touchstart
+    this.container.addEventListener('touchstart', (e) => {
+      const touch = e.changedTouches[0];
+      this.touchStartPoint = { x: touch.clientX, y: touch.clientY };
+      this.touchStartTime = Date.now();
+      const fn = (e) => {
+        for (let i = this.layers.length - 1; i >= 0; i--) {
+          const layer = this.layers[i];
+          layer['onTouchStart'].call(layer, e);
+        }
+      };
+      fn({ offsetX: ~~touch.clientX, offsetY: ~~touch.clientY });
+    });
+
+    // touchmove
+    this.container.addEventListener('touchmove', (e) => {
+      const touch = e.changedTouches[0];
+      const fn = (e) => {
+        for (let i = this.layers.length - 1; i >= 0; i--) {
+          const layer = this.layers[i];
+          layer['onTouchMove'].call(layer, e);
+        }
+      };
+      const handler = this.throttleDelay ? throttle(this.throttleDelay, fn, false) : fn;
+      handler({ offsetX: ~~touch.clientX, offsetY: ~~touch.clientY });
+    });
+
+    // touchend
+    this.container.addEventListener('touchend', (e) => {
+      const touch = e.changedTouches[0];
+      const diffX = Math.abs(touch.clientX - this.touchStartPoint.x);
+      const diffY = Math.abs(touch.clientY - this.touchStartPoint.y);
+      const now = Date.now()
+      if (now - this.touchStartTime > 500 && diffX < LONG_PRESS_DISTANCE && diffY < LONG_PRESS_DISTANCE) {
+        const fn = (e) => {
+          for (let i = this.layers.length - 1; i >= 0; i--) {
+            const layer = this.layers[i];
+            layer['onLongTap'].call(layer, e);
+          }
+        };
+        fn({ offsetX: ~~touch.clientX, offsetY: ~~touch.clientY });
+      } else {
+        const fn = (e) => {
+          for (let i = this.layers.length - 1; i >= 0; i--) {
+            const layer = this.layers[i];
+            layer['onTouchEnd'].call(layer, e);
+          }
+        };
+        fn({ offsetX: ~~touch.clientX, offsetY: ~~touch.clientY });
+      }
+    });
   }
 
   private removeEvents(): void {

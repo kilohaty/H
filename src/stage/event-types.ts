@@ -7,6 +7,12 @@ export default {
     click: 'stage.click',
     mouseUp: 'stage.mouseUp',
     contextMenu: 'stage.contextMenu',
+    // mobile
+    touchstart: 'stage.touchstart',
+    touchmove: 'stage.touchmove',
+    touchend: 'stage.touchend',
+    touchcancel: 'stage.touchcancel',
+    langTap: 'stage.langTap',
   },
   object: {
     mouseEnter: 'object.mouseEnter',
@@ -16,5 +22,12 @@ export default {
     click: 'object.click',
     mouseUp: 'object.mouseUp',
     contextMenu: 'object.contextMenu',
+    longTap: 'object.longTap',
+    // mobile
+    touchstart: 'object.touchstart',
+    touchmove: 'object.touchmove',
+    touchend: 'object.touchend',
+    touchcancel: 'object.touchcancel',
+    langTap: 'object.langTap',
   }
 }

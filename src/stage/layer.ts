@@ -147,27 +147,33 @@ export default class Layer {
   public onMouseDown(e): void {
     this.bus.emit(EventTypes.stage.mouseDown, {e: e});
 
-    const obj = this.getObjectByPoint({x: e.offsetX, y: e.offsetY});
-    if (obj) {
-      this.bus.emit(EventTypes.object.mouseDown, {e: e, object: obj});
+    if (this.bus.hasEvent(EventTypes.object.mouseDown)) {
+      const obj = this.getObjectByPoint({x: e.offsetX, y: e.offsetY});
+      if (obj) {
+        this.bus.emit(EventTypes.object.mouseDown, {e: e, object: obj});
+      }
     }
   }
 
   public onClick(e): void {
     this.bus.emit(EventTypes.stage.click, {e: e});
 
-    const obj = this.getObjectByPoint({x: e.offsetX, y: e.offsetY});
-    if (obj) {
-      this.bus.emit(EventTypes.object.click, {e: e, object: obj});
+    if (this.bus.hasEvent(EventTypes.object.click)) {
+      const obj = this.getObjectByPoint({x: e.offsetX, y: e.offsetY});
+      if (obj) {
+        this.bus.emit(EventTypes.object.click, {e: e, object: obj});
+      }
     }
   }
 
   public onMouseUp(e): void {
     this.bus.emit(EventTypes.stage.mouseUp, {e: e});
 
-    const obj = this.getObjectByPoint({x: e.offsetX, y: e.offsetY});
-    if (obj) {
-      this.bus.emit(EventTypes.object.mouseUp, {e: e, object: obj});
+    if (this.bus.hasEvent(EventTypes.object.mouseUp)) {
+      const obj = this.getObjectByPoint({x: e.offsetX, y: e.offsetY});
+      if (obj) {
+        this.bus.emit(EventTypes.object.mouseUp, {e: e, object: obj});
+      }
     }
   }
 
@@ -178,9 +184,59 @@ export default class Layer {
   public onContextMenu(e): void {
     this.bus.emit(EventTypes.stage.contextMenu, {e: e});
 
-    const obj = this.getObjectByPoint({x: e.offsetX, y: e.offsetY});
-    if (obj) {
-      this.bus.emit(EventTypes.object.contextMenu, {e: e, object: obj});
+    if (this.bus.hasEvent(EventTypes.object.contextMenu)) {
+      const obj = this.getObjectByPoint({x: e.offsetX, y: e.offsetY});
+      if (obj) {
+        this.bus.emit(EventTypes.object.contextMenu, {e: e, object: obj});
+      }
+    }
+  }
+
+  public onLongTap(e): void {
+    this.bus.emit(EventTypes.stage.langTap, {e: e});
+
+    if (this.bus.hasEvent(EventTypes.object.langTap)) {
+      const obj = this.getObjectByPoint({x: e.offsetX, y: e.offsetY});
+      if (obj) {
+        this.bus.emit(EventTypes.object.langTap, {e: e, object: obj});
+      }
+    }
+  }
+
+  public onTouchStart(e): void {
+    this.bus.emit(EventTypes.stage.touchstart, {e: e});
+
+    if (this.bus.hasEvent(EventTypes.object.touchstart)) {
+      const obj = this.getObjectByPoint({x: e.offsetX, y: e.offsetY});
+      if (obj) {
+        this.bus.emit(EventTypes.object.touchstart, {e: e, object: obj});
+      }
+    }
+  }
+
+  public onTouchMove(e): void {
+    this.bus.emit(EventTypes.stage.touchmove, {e: e});
+  }
+
+  public onTouchEnd(e): void {
+    this.bus.emit(EventTypes.stage.touchend, {e: e});
+
+    if (this.bus.hasEvent(EventTypes.object.touchend)) {
+      const obj = this.getObjectByPoint({x: e.offsetX, y: e.offsetY});
+      if (obj) {
+        this.bus.emit(EventTypes.object.touchend, {e: e, object: obj});
+      }
+    }
+  }
+
+  public onTouchCancel(e): void {
+    this.bus.emit(EventTypes.stage.touchcancel, {e: e});
+
+    if (this.bus.hasEvent(EventTypes.object.touchcancel)) {
+      const obj = this.getObjectByPoint({x: e.offsetX, y: e.offsetY});
+      if (obj) {
+        this.bus.emit(EventTypes.object.touchcancel, {e: e, object: obj});
+      }
     }
   }
 
