@@ -193,12 +193,12 @@ export default class Layer {
   }
 
   public onLongTap(e): void {
-    this.bus.emit(EventTypes.stage.langTap, {e: e});
+    this.bus.emit(EventTypes.stage.longTap, {e: e});
 
-    if (this.bus.hasEvent(EventTypes.object.langTap)) {
+    if (this.bus.hasEvent(EventTypes.object.longTap)) {
       const obj = this.getObjectByPoint({x: e.offsetX, y: e.offsetY});
       if (obj) {
-        this.bus.emit(EventTypes.object.langTap, {e: e, object: obj});
+        this.bus.emit(EventTypes.object.longTap, {e: e, object: obj});
       }
     }
   }

@@ -12,7 +12,7 @@ export default {
     touchmove: 'stage.touchmove',
     touchend: 'stage.touchend',
     touchcancel: 'stage.touchcancel',
-    langTap: 'stage.langTap',
+    longTap: 'stage.longTap',
   },
   object: {
     mouseEnter: 'object.mouseEnter',
@@ -22,12 +22,11 @@ export default {
     click: 'object.click',
     mouseUp: 'object.mouseUp',
     contextMenu: 'object.contextMenu',
-    longTap: 'object.longTap',
     // mobile
     touchstart: 'object.touchstart',
     touchmove: 'object.touchmove',
     touchend: 'object.touchend',
     touchcancel: 'object.touchcancel',
-    langTap: 'object.langTap',
+    longTap: 'object.longTap',
   }
 }
