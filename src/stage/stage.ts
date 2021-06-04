@@ -15,6 +15,8 @@ class Stage {
   public width: number;
   public height: number;
   public throttleDelay: number;
+  public pageScale: number;
+  public containerRect: ClientRect;
 
   public constructor(options: { el: HTMLElement | string, width?: number, height?: number, layerNumber?: number, throttleDelay: number }) {
     const el = options.el;
@@ -42,6 +44,10 @@ class Stage {
     this.initEvents();
     this.initMobileEvents();
     this.animationFrameId = requestAnimationFrame(this.loopAnim.bind(this));
+  }
+
+  public setPageScale(scale: number): void {
+     this.pageScale = scale
   }
 
   public resize(width: number, height: number): void {
@@ -113,6 +119,8 @@ class Stage {
   }
 
   private initMobileEvents() {
+    this.containerRect = this.container.getBoundingClientRect()
+
     // touchstart
     this.container.addEventListener('touchstart', (e) => {
       const touch = e.changedTouches[0];
@@ -124,7 +132,7 @@ class Stage {
           layer['onTouchStart'].call(layer, e);
         }
       };
-      fn({ offsetX: ~~touch.clientX, offsetY: ~~touch.clientY });
+      fn(this.calcMobileEventPosition(touch));
     });
 
     // touchmove
@@ -137,7 +145,7 @@ class Stage {
         }
       };
       const handler = this.throttleDelay ? throttle(this.throttleDelay, fn, false) : fn;
-      handler({ offsetX: ~~touch.clientX, offsetY: ~~touch.clientY });
+      handler(this.calcMobileEventPosition(touch));
     });
 
     // touchend
@@ -153,7 +161,7 @@ class Stage {
             layer['onLongTap'].call(layer, e);
           }
         };
-        fn({ offsetX: ~~touch.clientX, offsetY: ~~touch.clientY });
+        fn(this.calcMobileEventPosition(touch));
       } else {
         const fn = (e) => {
           for (let i = this.layers.length - 1; i >= 0; i--) {
@@ -161,9 +169,15 @@ class Stage {
             layer['onTouchEnd'].call(layer, e);
           }
         };
-        fn({ offsetX: ~~touch.clientX, offsetY: ~~touch.clientY });
+        fn(this.calcMobileEventPosition(touch));
       }
     });
+  }
+
+  private calcMobileEventPosition (touch) {
+    const offsetX = ~~(touch.clientX - this.containerRect.left) / (this.pageScale || 1)
+    const offsetY = ~~(touch.clientY - this.containerRect.top) / (this.pageScale || 1)
+    return { offsetX, offsetY }
   }
 
   private removeEvents(): void {
