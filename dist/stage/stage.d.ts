@@ -19,6 +19,7 @@ declare class Stage {
         height?: number;
         layerNumber?: number;
         throttleDelay: number;
+        pageScale?: number;
     });
     setPageScale(scale: number): void;
     resize(width: number, height: number): void;

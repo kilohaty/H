@@ -13,6 +13,7 @@ var Stage = /** @class */ (function () {
         var el = options.el;
         var width = +options.width || 300;
         var height = +options.height || 150;
+        this.pageScale = +options.pageScale || 1;
         this.container = typeof el === 'string' ? document.querySelector(el) : el;
         this.container.style.width = width + 'px';
         this.container.style.height = height + 'px';
@@ -106,7 +107,7 @@ var Stage = /** @class */ (function () {
         var _this = this;
         this.containerRect = this.container.getBoundingClientRect();
         // touchstart
-        this.container.addEventListener('touchstart', function (e) {
+        var touchStartHandler = function (e) {
             var touch = e.changedTouches[0];
             _this.touchStartPoint = { x: touch.clientX, y: touch.clientY };
             _this.touchStartTime = Date.now();
@@ -117,9 +118,11 @@ var Stage = /** @class */ (function () {
                 }
             };
             fn(_this.calcMobileEventPosition(touch));
-        });
+        };
+        this.eventHandlers['touchstart'] = touchStartHandler;
+        this.container.addEventListener('touchstart', touchStartHandler);
         // touchmove
-        this.container.addEventListener('touchmove', function (e) {
+        var touchMoveHandler = function (e) {
             var touch = e.changedTouches[0];
             var fn = function (e) {
                 for (var i = _this.layers.length - 1; i >= 0; i--) {
@@ -129,9 +132,11 @@ var Stage = /** @class */ (function () {
             };
             var handler = _this.throttleDelay ? throttle(_this.throttleDelay, fn, false) : fn;
             handler(_this.calcMobileEventPosition(touch));
-        });
+        };
+        this.eventHandlers['touchmove'] = touchMoveHandler;
+        this.container.addEventListener('touchmove', touchMoveHandler);
         // touchend
-        this.container.addEventListener('touchend', function (e) {
+        var touchEndHandler = function (e) {
             var touch = e.changedTouches[0];
             var diffX = Math.abs(touch.clientX - _this.touchStartPoint.x);
             var diffY = Math.abs(touch.clientY - _this.touchStartPoint.y);
@@ -154,7 +159,9 @@ var Stage = /** @class */ (function () {
                 };
                 fn(_this.calcMobileEventPosition(touch));
             }
-        });
+        };
+        this.eventHandlers['touchend'] = touchEndHandler;
+        this.container.addEventListener('touchend', touchEndHandler);
     };
     Stage.prototype.calcMobileEventPosition = function (touch) {
         var offsetX = ~~(touch.clientX - this.containerRect.left) / (this.pageScale || 1);
