@@ -18,11 +18,12 @@ class Stage {
   public pageScale: number;
   public containerRect: ClientRect;
 
-  public constructor(options: { el: HTMLElement | string, width?: number, height?: number, layerNumber?: number, throttleDelay: number }) {
+  public constructor(options: { el: HTMLElement | string, width?: number, height?: number, layerNumber?: number, throttleDelay: number, pageScale?: number }) {
     const el = options.el;
     const width = +options.width || 300;
     const height = +options.height || 150;
 
+    this.pageScale = +options.pageScale || 1;
     this.container = typeof el === 'string' ? document.querySelector(el) : el;
     this.container.style.width = width + 'px';
     this.container.style.height = height + 'px';
@@ -122,7 +123,7 @@ class Stage {
     this.containerRect = this.container.getBoundingClientRect()
 
     // touchstart
-    this.container.addEventListener('touchstart', (e) => {
+    const touchStartHandler = (e) => {
       const touch = e.changedTouches[0];
       this.touchStartPoint = { x: touch.clientX, y: touch.clientY };
       this.touchStartTime = Date.now();
@@ -133,10 +134,12 @@ class Stage {
         }
       };
       fn(this.calcMobileEventPosition(touch));
-    });
+    }
+    this.eventHandlers['touchstart'] = touchStartHandler;
+    this.container.addEventListener('touchstart', touchStartHandler);
 
     // touchmove
-    this.container.addEventListener('touchmove', (e) => {
+    const touchMoveHandler = (e) => {
       const touch = e.changedTouches[0];
       const fn = (e) => {
         for (let i = this.layers.length - 1; i >= 0; i--) {
@@ -146,10 +149,12 @@ class Stage {
       };
       const handler = this.throttleDelay ? throttle(this.throttleDelay, fn, false) : fn;
       handler(this.calcMobileEventPosition(touch));
-    });
+    };
+    this.eventHandlers['touchmove'] = touchMoveHandler;
+    this.container.addEventListener('touchmove', touchMoveHandler);
 
     // touchend
-    this.container.addEventListener('touchend', (e) => {
+    const touchEndHandler = (e) => {
       const touch = e.changedTouches[0];
       const diffX = Math.abs(touch.clientX - this.touchStartPoint.x);
       const diffY = Math.abs(touch.clientY - this.touchStartPoint.y);
@@ -171,7 +176,9 @@ class Stage {
         };
         fn(this.calcMobileEventPosition(touch));
       }
-    });
+    };
+    this.eventHandlers['touchend'] = touchEndHandler;
+    this.container.addEventListener('touchend', touchEndHandler);
   }
 
   private calcMobileEventPosition (touch) {
